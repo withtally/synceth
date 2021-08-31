@@ -5,7 +5,7 @@ contract Example {
     string private _exampleValue = "ethgen";
     event ExampleEvent(string value);
 
-    function exampleValue() public returns (string memory) {
+    function exampleValue() public view returns (string memory) {
         return _exampleValue;
     }
 }

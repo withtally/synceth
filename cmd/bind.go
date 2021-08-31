@@ -33,6 +33,10 @@ var bindCmd = &cli.Command{
 			return err
 		}
 
+		if err := os.MkdirAll(outdir, os.ModePerm); err != nil {
+			return err
+		}
+
 		if err := filepath.Walk(path,
 			func(path string, info os.FileInfo, err error) error {
 				if err != nil {
