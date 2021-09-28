@@ -3,7 +3,7 @@
 A simple yet powerful toolchain for Go based smart contract development
 
 - Compile solidity contracts and generate `.abi` and `.bin` artifacts.
-- Automatically resolve solidity compiler versions.
+- Solidity compiler resolution and management.
 - Generate golang bindings from contract artifacts.
 - Generate contract fakes for smart contract testing.
 - Generate event handlers for smart contract indexing.

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -14,7 +15,10 @@ import (
 )
 
 type ExampleProcessor interface {
-	Setup(address common.Address, eth bind.ContractBackend) error
+	Setup(address common.Address, eth interface {
+		ethereum.ChainReader
+		bind.ContractBackend
+	}) error
 	Initialize(ctx context.Context, bh *types.Header, emit func(string, []interface{})) error
 
 	ProcessExampleEvent(ctx context.Context, e *ExampleExampleEvent, emit func(string, []interface{})) error
@@ -26,10 +30,16 @@ type UnimplementedExampleProcessor struct {
 	Address  common.Address
 	ABI      abi.ABI
 	Contract *Example
-	Eth      bind.ContractBackend
+	Eth      interface {
+		ethereum.ChainReader
+		bind.ContractBackend
+	}
 }
 
-func (h *UnimplementedExampleProcessor) Setup(address common.Address, eth bind.ContractBackend) error {
+func (h *UnimplementedExampleProcessor) Setup(address common.Address, eth interface {
+	ethereum.ChainReader
+	bind.ContractBackend
+}) error {
 	contract, err := NewExample(address, eth)
 	if err != nil {
 		return fmt.Errorf("new Example: %w", err)

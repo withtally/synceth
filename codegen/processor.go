@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -31,7 +32,10 @@ import (
 
 {{range $handler := .Processors}}
 	type {{.Type}}Processor interface {
-		Setup(address common.Address, eth bind.ContractBackend) error
+		Setup(address common.Address, eth interface {
+			ethereum.ChainReader
+			bind.ContractBackend
+		}) error
     	Initialize(ctx context.Context, bh *types.Header, emit func(string, []interface{})) error
 		{{range .Events}}
 			Process{{.Normalized.Name}}(ctx context.Context, e *{{$handler.Type}}{{.Normalized.Name}}, emit func(string, []interface{})) error
@@ -43,10 +47,16 @@ import (
 		Address  common.Address
 		ABI      abi.ABI
 		Contract *{{.Type}}
-		Eth      bind.ContractBackend
+		Eth      interface {
+			ethereum.ChainReader
+			bind.ContractBackend
+		}
 	}
 
-	func (h *Unimplemented{{.Type}}Processor) Setup(address common.Address, eth bind.ContractBackend) error {
+	func (h *Unimplemented{{.Type}}Processor) Setup(address common.Address, eth interface {
+		ethereum.ChainReader
+		bind.ContractBackend
+	}) error {
 		contract, err := New{{.Type}}(address, eth)
 		if err != nil {
 			return fmt.Errorf("new {{.Type}}: %w", err)
