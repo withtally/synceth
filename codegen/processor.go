@@ -36,7 +36,7 @@ import (
 			ethereum.ChainReader
 			bind.ContractBackend
 		}) error
-    	Initialize(ctx context.Context, bh *types.Header, emit func(string, []interface{})) error
+    	Initialize(ctx context.Context, start uint64, emit func(string, []interface{})) error
 		{{range .Events}}
 			Process{{.Normalized.Name}}(ctx context.Context, e *{{$handler.Type}}{{.Normalized.Name}}, emit func(string, []interface{})) error
 		{{end}}
@@ -109,7 +109,7 @@ import (
 		return abi.ParseTopics(out, indexed, log.Topics[1:])
 	}
 
-	func (h *Unimplemented{{$handler.Type}}Processor) Initialize(ctx context.Context, bh *types.Header, emit func(string, []interface{})) error {
+	func (h *Unimplemented{{$handler.Type}}Processor) Initialize(ctx context.Context, start uint64, emit func(string, []interface{})) error {
 		return nil
 	}
 

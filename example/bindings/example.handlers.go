@@ -19,7 +19,7 @@ type ExampleProcessor interface {
 		ethereum.ChainReader
 		bind.ContractBackend
 	}) error
-	Initialize(ctx context.Context, bh *types.Header, emit func(string, []interface{})) error
+	Initialize(ctx context.Context, start uint64, emit func(string, []interface{})) error
 
 	ProcessExampleEvent(ctx context.Context, e *ExampleExampleEvent, emit func(string, []interface{})) error
 
@@ -92,7 +92,7 @@ func (h *UnimplementedExampleProcessor) UnpackLog(out interface{}, event string,
 	return abi.ParseTopics(out, indexed, log.Topics[1:])
 }
 
-func (h *UnimplementedExampleProcessor) Initialize(ctx context.Context, bh *types.Header, emit func(string, []interface{})) error {
+func (h *UnimplementedExampleProcessor) Initialize(ctx context.Context, start uint64, emit func(string, []interface{})) error {
 	return nil
 }
 
