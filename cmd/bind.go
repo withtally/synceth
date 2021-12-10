@@ -28,9 +28,9 @@ var bindCmd = &cli.Command{
 		}
 
 		return codegen.GenerateBindings(path, outdir, &codegen.BindingsConfig{
-			Fakes: tx.Bool("fakes"),
+			Fakes: ctx.Bool("fakes"),
 			Handlers: codegen.HandlersConfig{
-				Generate: tx.Bool("handlers"),
+				Generate: ctx.Bool("handlers"),
 			},
 		})
 	},
