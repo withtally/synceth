@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"go/format"
+	"reflect"
 	"strings"
 	"text/template"
 
@@ -28,6 +29,10 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+
+	{{range $type := .InputTypes}}
+		"{{$type.PkgPath}}"
+	{{end}}
 )
 
 {{range $handler := .Processors}}
@@ -36,9 +41,9 @@ import (
 			ethereum.ChainReader
 			bind.ContractBackend
 		}) error
-    	Initialize(ctx context.Context, start uint64, emit func(string, []interface{})) error
+    	Initialize(ctx context.Context, start uint64, {{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error
 		{{range .Events}}
-			Process{{.Normalized.Name}}(ctx context.Context, e *{{$handler.Type}}{{.Normalized.Name}}, emit func(string, []interface{})) error
+			Process{{.Normalized.Name}}(ctx context.Context, e *{{$handler.Type}}{{.Normalized.Name}}, {{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error
 		{{end}}
 		mustEmbedUnimplemented{{.Type}}Processor()
 	}
@@ -74,8 +79,8 @@ import (
 		return nil
 	}
 
-	func (h *Unimplemented{{.Type}}Processor) ProcessElement(p interface{}) func(context.Context, types.Log, func(string, []interface{})) error {
-		return func(ctx context.Context, vLog types.Log, emit func(string, []interface{})) error {
+	func (h *Unimplemented{{.Type}}Processor) ProcessElement(p interface{}) func(context.Context, types.Log, {{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error {
+		return func(ctx context.Context, vLog types.Log, {{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error {
 			switch vLog.Topics[0].Hex() {
 			{{range .Events}}
 			case h.ABI.Events["{{.Normalized.Name}}"].ID.Hex():
@@ -85,7 +90,7 @@ import (
 				}
 
 				e.Raw = vLog
-				if err := p.({{$handler.Type}}Processor).Process{{.Normalized.Name}}(ctx, e, emit); err != nil {
+				if err := p.({{$handler.Type}}Processor).Process{{.Normalized.Name}}(ctx, e, {{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}}{{end}}); err != nil {
 					return fmt.Errorf("processing {{.Normalized.Name}}: %w", err)
 				}
 			{{end}}
@@ -109,12 +114,12 @@ import (
 		return abi.ParseTopics(out, indexed, log.Topics[1:])
 	}
 
-	func (h *Unimplemented{{$handler.Type}}Processor) Initialize(ctx context.Context, start uint64, emit func(string, []interface{})) error {
+	func (h *Unimplemented{{$handler.Type}}Processor) Initialize(ctx context.Context, start uint64, {{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error {
 		return nil
 	}
 
 	{{range .Events}}
-		func (h *Unimplemented{{$handler.Type}}Processor) Process{{.Normalized.Name}}(ctx context.Context, e *{{$handler.Type}}{{.Normalized.Name}}, emit func(string, []interface{})) error {
+		func (h *Unimplemented{{$handler.Type}}Processor) Process{{.Normalized.Name}}(ctx context.Context, e *{{$handler.Type}}{{.Normalized.Name}}, {{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error {
 			return nil
 		}
 	{{end}}
@@ -133,14 +138,35 @@ type tmplProcessorData struct {
 	Events map[string]*tmplEventData
 }
 
+type inputType struct {
+	Name    string
+	Ident   string
+	Kind    reflect.Kind
+	PkgPath string
+}
+
 type tmplData struct {
 	Package    string
+	InputTypes []inputType
 	Processors map[string]*tmplProcessorData
 }
 
-func GenerateProcessor(types []string, abis []string, pkg string) (string, error) {
+func GenerateProcessor(types []string, abis []string, pkg string, inputs []InputType) (string, error) {
 	var handlers = make(map[string]*tmplProcessorData)
 	var n int
+
+	var inputTypes []inputType
+	for _, v := range inputs {
+		t := reflect.TypeOf(v.Type)
+		tv := indirect(t)
+
+		inputTypes = append(inputTypes, inputType{
+			Kind:    t.Kind(),
+			Name:    v.Name,
+			Ident:   tv.String(),
+			PkgPath: tv.PkgPath(),
+		})
+	}
 
 	for i, typ := range types {
 		var events = make(map[string]*tmplEventData)
@@ -175,12 +201,16 @@ func GenerateProcessor(types []string, abis []string, pkg string) (string, error
 	}
 
 	data := &tmplData{
+		InputTypes: inputTypes,
 		Package:    pkg,
 		Processors: handlers,
 	}
 
 	buffer := new(bytes.Buffer)
-	tmpl := template.Must(template.New("").Parse(tmplProcessor))
+	tmpl := template.Must(template.New("").Funcs(template.FuncMap{
+		"formatPointer": formatPointer,
+		"separator":     separator,
+	}).Parse(tmplProcessor))
 	if err := tmpl.Execute(buffer, data); err != nil {
 		return "", err
 	}
@@ -191,4 +221,20 @@ func GenerateProcessor(types []string, abis []string, pkg string) (string, error
 	}
 
 	return string(handler), nil
+}
+
+// indirect returns the type at the end of indirection.
+func indirect(t reflect.Type) reflect.Type {
+	for t.Kind() == reflect.Ptr {
+		t = t.Elem()
+	}
+	return t
+}
+
+func formatPointer(k reflect.Kind) string {
+	if k == reflect.Ptr {
+		return "*"
+	}
+
+	return ""
 }
