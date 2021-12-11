@@ -39,6 +39,7 @@ import (
 	type {{.Type}}Processor interface {
 		Setup(address common.Address, eth interface {
 			ethereum.ChainReader
+			ethereum.ChainStateReader
 			bind.ContractBackend
 		}) error
     	Initialize(ctx context.Context, start uint64, {{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error
@@ -54,12 +55,14 @@ import (
 		Contract *{{.Type}}
 		Eth      interface {
 			ethereum.ChainReader
+			ethereum.ChainStateReader
 			bind.ContractBackend
 		}
 	}
 
 	func (h *Unimplemented{{.Type}}Processor) Setup(address common.Address, eth interface {
 		ethereum.ChainReader
+		ethereum.ChainStateReader
 		bind.ContractBackend
 	}) error {
 		contract, err := New{{.Type}}(address, eth)
