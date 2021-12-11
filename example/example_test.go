@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/withtally/ethgen/example/bindings"
-	"github.com/withtally/ethgen/test"
+	"github.com/withtally/synceth/example/bindings"
+	"github.com/withtally/synceth/test"
 )
 
 func TestExample(t *testing.T) {

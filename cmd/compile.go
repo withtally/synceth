@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/urfave/cli/v2"
-	"github.com/withtally/ethgen/codegen"
+	"github.com/withtally/synceth/codegen"
 )
 
 var compileCmd = &cli.Command{

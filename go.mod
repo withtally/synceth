@@ -1,4 +1,4 @@
-module github.com/withtally/ethgen
+module github.com/withtally/synceth
 
 go 1.16
 

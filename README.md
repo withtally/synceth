@@ -13,7 +13,7 @@ A simple yet powerful toolchain for Go based smart contract development
 Create a `generate.go` file and add the following:
 
 ```
-//go:generate go run -mod=mod github.com/withtally/ethgen compile --outdir ./artifacts ./solidity
+//go:generate go run -mod=mod github.com/withtally/synceth compile --outdir ./artifacts ./solidity
 ```
 
 ## Generating bindings
@@ -21,7 +21,7 @@ Create a `generate.go` file and add the following:
 Create a `generate.go` file and add the following:
 
 ```
-//go:generate go run -mod=mod github.com/withtally/ethgen bind --handlers --fakes --outdir ./bindings ./artifacts
+//go:generate go run -mod=mod github.com/withtally/synceth bind --handlers --fakes --outdir ./bindings ./artifacts
 ```
 
 ## Using Fakes

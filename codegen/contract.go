@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/withtally/ethgen/solc"
+	"github.com/withtally/synceth/solc"
 )
 
 const (

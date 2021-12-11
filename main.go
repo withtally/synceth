@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/withtally/ethgen/cmd"
+	"github.com/withtally/synceth/cmd"
 )
 
 func main() {

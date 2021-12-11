@@ -16,7 +16,7 @@ import (
 	"github.com/Masterminds/semver/v3"
 	"github.com/ethereum/go-ethereum/common/compiler"
 	"github.com/shibukawa/configdir"
-	"github.com/withtally/ethgen/parser"
+	"github.com/withtally/synceth/parser"
 )
 
 // See: https://docs.soliditylang.org/en/latest/installing-solidity.html#static-binaries
