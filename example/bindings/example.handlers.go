@@ -18,6 +18,7 @@ type ExampleProcessor interface {
 	Setup(address common.Address, eth interface {
 		ethereum.ChainReader
 		ethereum.ChainStateReader
+		ethereum.TransactionReader
 		bind.ContractBackend
 	}) error
 	Initialize(ctx context.Context, start uint64) error
@@ -34,6 +35,7 @@ type UnimplementedExampleProcessor struct {
 	Eth      interface {
 		ethereum.ChainReader
 		ethereum.ChainStateReader
+		ethereum.TransactionReader
 		bind.ContractBackend
 	}
 }
@@ -41,6 +43,7 @@ type UnimplementedExampleProcessor struct {
 func (h *UnimplementedExampleProcessor) Setup(address common.Address, eth interface {
 	ethereum.ChainReader
 	ethereum.ChainStateReader
+	ethereum.TransactionReader
 	bind.ContractBackend
 }) error {
 	contract, err := NewExample(address, eth)
