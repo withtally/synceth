@@ -45,7 +45,7 @@ import (
 		}) error
     	Initialize(ctx context.Context, start uint64, {{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error
 		{{range .Events}}
-			Process{{.Normalized.Name}}(ctx context.Context, e *{{$handler.Type}}{{.Normalized.Name}}, cb func({{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}})) error
+			Process{{.Normalized.Name}}(ctx context.Context, e *{{$handler.Type}}{{.Normalized.Name}}) (func({{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error, error)
 		{{end}}
 		mustEmbedBase{{.Type}}Processor()
 	}
@@ -85,23 +85,26 @@ import (
 		return nil
 	}
 
-	func (h *Base{{.Type}}Processor) ProcessElement(p interface{}) func(context.Context, types.Log, func({{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{formatPointer $type.Kind}}{{$type.Ident}}{{end}})) error {
-		return func(ctx context.Context, vLog types.Log, cb func({{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{formatPointer $type.Kind}}{{$type.Ident}}{{end}})) error {
+	func (h *Base{{.Type}}Processor) ProcessElement(p interface{}) func(context.Context, types.Log) (func({{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error, error) {
+		return func(ctx context.Context, vLog types.Log) (func({{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error, error) {
 			switch vLog.Topics[0].Hex() {
 			{{range .Events}}
 			case h.ABI.Events["{{.Normalized.Name}}"].ID.Hex():
 				e := new({{$handler.Type}}{{.Normalized.Name}})
 				if err := h.UnpackLog(e, "{{.Normalized.Name}}", vLog); err != nil {
-					return fmt.Errorf("unpacking {{.Normalized.Name}}: %w", err)
+					return nil, fmt.Errorf("unpacking {{.Normalized.Name}}: %w", err)
 				}
 
 				e.Raw = vLog
-				if err := p.({{$handler.Type}}Processor).Process{{.Normalized.Name}}(ctx, e, cb); err != nil {
-					return fmt.Errorf("processing {{.Normalized.Name}}: %w", err)
+				cb, err := p.({{$handler.Type}}Processor).Process{{.Normalized.Name}}(ctx, e);
+				if err != nil {
+					return nil, fmt.Errorf("processing {{.Normalized.Name}}: %w", err)
 				}
+
+				return cb, nil
 			{{end}}
 			}
-			return nil
+			return nil, nil
 		}
 	}
 
@@ -125,8 +128,8 @@ import (
 	}
 
 	{{range .Events}}
-		func (h *Base{{$handler.Type}}Processor) Process{{.Normalized.Name}}(ctx context.Context, e *{{$handler.Type}}{{.Normalized.Name}}, cb func({{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}})) error {
-			return nil
+		func (h *Base{{$handler.Type}}Processor) Process{{.Normalized.Name}}(ctx context.Context, e *{{$handler.Type}}{{.Normalized.Name}}) (func({{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error, error) {
+			return nil, nil
 		}
 	{{end}}
 

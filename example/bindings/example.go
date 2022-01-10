@@ -365,3 +365,383 @@ func (_Example *ExampleFilterer) ParseExampleEvent(log types.Log) (*ExampleExamp
 	event.Raw = log
 	return event, nil
 }
+
+// FakeExampleMetaData contains all meta data concerning the FakeExample contract.
+var FakeExampleMetaData = &bind.MetaData{
+	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\"}],\"name\":\"ExampleEvent\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"exampleValue\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\"}],\"name\":\"fakeEmitExampleEvent\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"retExampleValue0\",\"type\":\"string\"}],\"name\":\"fakeSetExampleValue\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
+	Bin: "0x608060405234801561001057600080fd5b50610395806100206000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c8063010ac92514610046578063b8290c1a1461005b578063d8f7c4cf1461006e575b600080fd5b61005961005436600461021e565b61008c565b005b61005961006936600461021e565b6100c6565b6100766100dd565b60405161008391906102cf565b60405180910390f35b7fb74a38eb2ebca56512a2bb0283f335555a4a4dac46ab998d65fd76f9027dca70816040516100bb91906102cf565b60405180910390a150565b80516100d990600090602084019061016f565b5050565b6060600080546100ec90610324565b80601f016020809104026020016040519081016040528092919081815260200182805461011890610324565b80156101655780601f1061013a57610100808354040283529160200191610165565b820191906000526020600020905b81548152906001019060200180831161014857829003601f168201915b5050505050905090565b82805461017b90610324565b90600052602060002090601f01602090048101928261019d57600085556101e3565b82601f106101b657805160ff19168380011785556101e3565b828001600101855582156101e3579182015b828111156101e35782518255916020019190600101906101c8565b506101ef9291506101f3565b5090565b5b808211156101ef57600081556001016101f4565b634e487b7160e01b600052604160045260246000fd5b60006020828403121561023057600080fd5b813567ffffffffffffffff8082111561024857600080fd5b818401915084601f83011261025c57600080fd5b81358181111561026e5761026e610208565b604051601f8201601f19908116603f0116810190838211818310171561029657610296610208565b816040528281528760208487010111156102af57600080fd5b826020860160208301376000928101602001929092525095945050505050565b600060208083528351808285015260005b818110156102fc578581018301518582016040015282016102e0565b8181111561030e576000604083870101525b50601f01601f1916929092016040019392505050565b600181811c9082168061033857607f821691505b6020821081141561035957634e487b7160e01b600052602260045260246000fd5b5091905056fea264697066735822122091637afd196c60307c2f1521820c8f4f96f92ad67153067cdbdb41e4a4b8bb2264736f6c634300080a0033",
+}
+
+// FakeExampleABI is the input ABI used to generate the binding from.
+// Deprecated: Use FakeExampleMetaData.ABI instead.
+var FakeExampleABI = FakeExampleMetaData.ABI
+
+// FakeExampleBin is the compiled bytecode used for deploying new contracts.
+// Deprecated: Use FakeExampleMetaData.Bin instead.
+var FakeExampleBin = FakeExampleMetaData.Bin
+
+// DeployFakeExample deploys a new Ethereum contract, binding an instance of FakeExample to it.
+func DeployFakeExample(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *FakeExample, error) {
+	parsed, err := FakeExampleMetaData.GetAbi()
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	if parsed == nil {
+		return common.Address{}, nil, nil, errors.New("GetABI returned nil")
+	}
+
+	address, tx, contract, err := bind.DeployContract(auth, *parsed, common.FromHex(FakeExampleBin), backend)
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	return address, tx, &FakeExample{FakeExampleCaller: FakeExampleCaller{contract: contract}, FakeExampleTransactor: FakeExampleTransactor{contract: contract}, FakeExampleFilterer: FakeExampleFilterer{contract: contract}}, nil
+}
+
+// FakeExample is an auto generated Go binding around an Ethereum contract.
+type FakeExample struct {
+	FakeExampleCaller     // Read-only binding to the contract
+	FakeExampleTransactor // Write-only binding to the contract
+	FakeExampleFilterer   // Log filterer for contract events
+}
+
+// FakeExampleCaller is an auto generated read-only Go binding around an Ethereum contract.
+type FakeExampleCaller struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// FakeExampleTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type FakeExampleTransactor struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// FakeExampleFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type FakeExampleFilterer struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// FakeExampleSession is an auto generated Go binding around an Ethereum contract,
+// with pre-set call and transact options.
+type FakeExampleSession struct {
+	Contract     *FakeExample      // Generic contract binding to set the session for
+	CallOpts     bind.CallOpts     // Call options to use throughout this session
+	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
+}
+
+// FakeExampleCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// with pre-set call options.
+type FakeExampleCallerSession struct {
+	Contract *FakeExampleCaller // Generic contract caller binding to set the session for
+	CallOpts bind.CallOpts      // Call options to use throughout this session
+}
+
+// FakeExampleTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// with pre-set transact options.
+type FakeExampleTransactorSession struct {
+	Contract     *FakeExampleTransactor // Generic contract transactor binding to set the session for
+	TransactOpts bind.TransactOpts      // Transaction auth options to use throughout this session
+}
+
+// FakeExampleRaw is an auto generated low-level Go binding around an Ethereum contract.
+type FakeExampleRaw struct {
+	Contract *FakeExample // Generic contract binding to access the raw methods on
+}
+
+// FakeExampleCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type FakeExampleCallerRaw struct {
+	Contract *FakeExampleCaller // Generic read-only contract binding to access the raw methods on
+}
+
+// FakeExampleTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type FakeExampleTransactorRaw struct {
+	Contract *FakeExampleTransactor // Generic write-only contract binding to access the raw methods on
+}
+
+// NewFakeExample creates a new instance of FakeExample, bound to a specific deployed contract.
+func NewFakeExample(address common.Address, backend bind.ContractBackend) (*FakeExample, error) {
+	contract, err := bindFakeExample(address, backend, backend, backend)
+	if err != nil {
+		return nil, err
+	}
+	return &FakeExample{FakeExampleCaller: FakeExampleCaller{contract: contract}, FakeExampleTransactor: FakeExampleTransactor{contract: contract}, FakeExampleFilterer: FakeExampleFilterer{contract: contract}}, nil
+}
+
+// NewFakeExampleCaller creates a new read-only instance of FakeExample, bound to a specific deployed contract.
+func NewFakeExampleCaller(address common.Address, caller bind.ContractCaller) (*FakeExampleCaller, error) {
+	contract, err := bindFakeExample(address, caller, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &FakeExampleCaller{contract: contract}, nil
+}
+
+// NewFakeExampleTransactor creates a new write-only instance of FakeExample, bound to a specific deployed contract.
+func NewFakeExampleTransactor(address common.Address, transactor bind.ContractTransactor) (*FakeExampleTransactor, error) {
+	contract, err := bindFakeExample(address, nil, transactor, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &FakeExampleTransactor{contract: contract}, nil
+}
+
+// NewFakeExampleFilterer creates a new log filterer instance of FakeExample, bound to a specific deployed contract.
+func NewFakeExampleFilterer(address common.Address, filterer bind.ContractFilterer) (*FakeExampleFilterer, error) {
+	contract, err := bindFakeExample(address, nil, nil, filterer)
+	if err != nil {
+		return nil, err
+	}
+	return &FakeExampleFilterer{contract: contract}, nil
+}
+
+// bindFakeExample binds a generic wrapper to an already deployed contract.
+func bindFakeExample(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := abi.JSON(strings.NewReader(FakeExampleABI))
+	if err != nil {
+		return nil, err
+	}
+	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_FakeExample *FakeExampleRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+	return _FakeExample.Contract.FakeExampleCaller.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_FakeExample *FakeExampleRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _FakeExample.Contract.FakeExampleTransactor.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_FakeExample *FakeExampleRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _FakeExample.Contract.FakeExampleTransactor.contract.Transact(opts, method, params...)
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_FakeExample *FakeExampleCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+	return _FakeExample.Contract.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_FakeExample *FakeExampleTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _FakeExample.Contract.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_FakeExample *FakeExampleTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _FakeExample.Contract.contract.Transact(opts, method, params...)
+}
+
+// ExampleValue is a free data retrieval call binding the contract method 0xd8f7c4cf.
+//
+// Solidity: function exampleValue() view returns(string)
+func (_FakeExample *FakeExampleCaller) ExampleValue(opts *bind.CallOpts) (string, error) {
+	var out []interface{}
+	err := _FakeExample.contract.Call(opts, &out, "exampleValue")
+
+	if err != nil {
+		return *new(string), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(string)).(*string)
+
+	return out0, err
+
+}
+
+// ExampleValue is a free data retrieval call binding the contract method 0xd8f7c4cf.
+//
+// Solidity: function exampleValue() view returns(string)
+func (_FakeExample *FakeExampleSession) ExampleValue() (string, error) {
+	return _FakeExample.Contract.ExampleValue(&_FakeExample.CallOpts)
+}
+
+// ExampleValue is a free data retrieval call binding the contract method 0xd8f7c4cf.
+//
+// Solidity: function exampleValue() view returns(string)
+func (_FakeExample *FakeExampleCallerSession) ExampleValue() (string, error) {
+	return _FakeExample.Contract.ExampleValue(&_FakeExample.CallOpts)
+}
+
+// FakeEmitExampleEvent is a paid mutator transaction binding the contract method 0x010ac925.
+//
+// Solidity: function fakeEmitExampleEvent(string value) returns()
+func (_FakeExample *FakeExampleTransactor) FakeEmitExampleEvent(opts *bind.TransactOpts, value string) (*types.Transaction, error) {
+	return _FakeExample.contract.Transact(opts, "fakeEmitExampleEvent", value)
+}
+
+// FakeEmitExampleEvent is a paid mutator transaction binding the contract method 0x010ac925.
+//
+// Solidity: function fakeEmitExampleEvent(string value) returns()
+func (_FakeExample *FakeExampleSession) FakeEmitExampleEvent(value string) (*types.Transaction, error) {
+	return _FakeExample.Contract.FakeEmitExampleEvent(&_FakeExample.TransactOpts, value)
+}
+
+// FakeEmitExampleEvent is a paid mutator transaction binding the contract method 0x010ac925.
+//
+// Solidity: function fakeEmitExampleEvent(string value) returns()
+func (_FakeExample *FakeExampleTransactorSession) FakeEmitExampleEvent(value string) (*types.Transaction, error) {
+	return _FakeExample.Contract.FakeEmitExampleEvent(&_FakeExample.TransactOpts, value)
+}
+
+// FakeSetExampleValue is a paid mutator transaction binding the contract method 0xb8290c1a.
+//
+// Solidity: function fakeSetExampleValue(string retExampleValue0) returns()
+func (_FakeExample *FakeExampleTransactor) FakeSetExampleValue(opts *bind.TransactOpts, retExampleValue0 string) (*types.Transaction, error) {
+	return _FakeExample.contract.Transact(opts, "fakeSetExampleValue", retExampleValue0)
+}
+
+// FakeSetExampleValue is a paid mutator transaction binding the contract method 0xb8290c1a.
+//
+// Solidity: function fakeSetExampleValue(string retExampleValue0) returns()
+func (_FakeExample *FakeExampleSession) FakeSetExampleValue(retExampleValue0 string) (*types.Transaction, error) {
+	return _FakeExample.Contract.FakeSetExampleValue(&_FakeExample.TransactOpts, retExampleValue0)
+}
+
+// FakeSetExampleValue is a paid mutator transaction binding the contract method 0xb8290c1a.
+//
+// Solidity: function fakeSetExampleValue(string retExampleValue0) returns()
+func (_FakeExample *FakeExampleTransactorSession) FakeSetExampleValue(retExampleValue0 string) (*types.Transaction, error) {
+	return _FakeExample.Contract.FakeSetExampleValue(&_FakeExample.TransactOpts, retExampleValue0)
+}
+
+// FakeExampleExampleEventIterator is returned from FilterExampleEvent and is used to iterate over the raw logs and unpacked data for ExampleEvent events raised by the FakeExample contract.
+type FakeExampleExampleEventIterator struct {
+	Event *FakeExampleExampleEvent // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *FakeExampleExampleEventIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(FakeExampleExampleEvent)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(FakeExampleExampleEvent)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *FakeExampleExampleEventIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *FakeExampleExampleEventIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// FakeExampleExampleEvent represents a ExampleEvent event raised by the FakeExample contract.
+type FakeExampleExampleEvent struct {
+	Value string
+	Raw   types.Log // Blockchain specific contextual infos
+}
+
+// FilterExampleEvent is a free log retrieval operation binding the contract event 0xb74a38eb2ebca56512a2bb0283f335555a4a4dac46ab998d65fd76f9027dca70.
+//
+// Solidity: event ExampleEvent(string value)
+func (_FakeExample *FakeExampleFilterer) FilterExampleEvent(opts *bind.FilterOpts) (*FakeExampleExampleEventIterator, error) {
+
+	logs, sub, err := _FakeExample.contract.FilterLogs(opts, "ExampleEvent")
+	if err != nil {
+		return nil, err
+	}
+	return &FakeExampleExampleEventIterator{contract: _FakeExample.contract, event: "ExampleEvent", logs: logs, sub: sub}, nil
+}
+
+// WatchExampleEvent is a free log subscription operation binding the contract event 0xb74a38eb2ebca56512a2bb0283f335555a4a4dac46ab998d65fd76f9027dca70.
+//
+// Solidity: event ExampleEvent(string value)
+func (_FakeExample *FakeExampleFilterer) WatchExampleEvent(opts *bind.WatchOpts, sink chan<- *FakeExampleExampleEvent) (event.Subscription, error) {
+
+	logs, sub, err := _FakeExample.contract.WatchLogs(opts, "ExampleEvent")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(FakeExampleExampleEvent)
+				if err := _FakeExample.contract.UnpackLog(event, "ExampleEvent", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseExampleEvent is a log parse operation binding the contract event 0xb74a38eb2ebca56512a2bb0283f335555a4a4dac46ab998d65fd76f9027dca70.
+//
+// Solidity: event ExampleEvent(string value)
+func (_FakeExample *FakeExampleFilterer) ParseExampleEvent(log types.Log) (*FakeExampleExampleEvent, error) {
+	event := new(FakeExampleExampleEvent)
+	if err := _FakeExample.contract.UnpackLog(event, "ExampleEvent", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}

@@ -25,7 +25,7 @@ type ExampleProcessor interface {
 	}) error
 	Initialize(ctx context.Context, start uint64, tx *example.TestInput) error
 
-	ProcessExampleEvent(ctx context.Context, e *ExampleExampleEvent, cb func(tx *example.TestInput)) error
+	ProcessExampleEvent(ctx context.Context, e *ExampleExampleEvent) (func(tx *example.TestInput) error, error)
 
 	mustEmbedBaseExampleProcessor()
 }
@@ -65,23 +65,26 @@ func (h *BaseExampleProcessor) Setup(address common.Address, eth interface {
 	return nil
 }
 
-func (h *BaseExampleProcessor) ProcessElement(p interface{}) func(context.Context, types.Log, func(*example.TestInput)) error {
-	return func(ctx context.Context, vLog types.Log, cb func(*example.TestInput)) error {
+func (h *BaseExampleProcessor) ProcessElement(p interface{}) func(context.Context, types.Log) (func(*example.TestInput) error, error) {
+	return func(ctx context.Context, vLog types.Log) (func(*example.TestInput) error, error) {
 		switch vLog.Topics[0].Hex() {
 
 		case h.ABI.Events["ExampleEvent"].ID.Hex():
 			e := new(ExampleExampleEvent)
 			if err := h.UnpackLog(e, "ExampleEvent", vLog); err != nil {
-				return fmt.Errorf("unpacking ExampleEvent: %w", err)
+				return nil, fmt.Errorf("unpacking ExampleEvent: %w", err)
 			}
 
 			e.Raw = vLog
-			if err := p.(ExampleProcessor).ProcessExampleEvent(ctx, e, cb); err != nil {
-				return fmt.Errorf("processing ExampleEvent: %w", err)
+			cb, err := p.(ExampleProcessor).ProcessExampleEvent(ctx, e)
+			if err != nil {
+				return nil, fmt.Errorf("processing ExampleEvent: %w", err)
 			}
 
+			return cb, nil
+
 		}
-		return nil
+		return nil, nil
 	}
 }
 
@@ -104,8 +107,8 @@ func (h *BaseExampleProcessor) Initialize(ctx context.Context, start uint64, tx 
 	return nil
 }
 
-func (h *BaseExampleProcessor) ProcessExampleEvent(ctx context.Context, e *ExampleExampleEvent, cb func(tx *example.TestInput)) error {
-	return nil
+func (h *BaseExampleProcessor) ProcessExampleEvent(ctx context.Context, e *ExampleExampleEvent) (func(tx *example.TestInput) error, error) {
+	return nil, nil
 }
 
 func (h *BaseExampleProcessor) mustEmbedBaseExampleProcessor() {}
