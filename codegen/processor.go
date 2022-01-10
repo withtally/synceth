@@ -45,12 +45,12 @@ import (
 		}) error
     	Initialize(ctx context.Context, start uint64, {{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error
 		{{range .Events}}
-			Process{{.Normalized.Name}}(ctx context.Context, e *{{$handler.Type}}{{.Normalized.Name}}, {{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error
+			Process{{.Normalized.Name}}(ctx context.Context, e *{{$handler.Type}}{{.Normalized.Name}}, cb func({{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}})) error
 		{{end}}
-		mustEmbedUnimplemented{{.Type}}Processor()
+		mustEmbedBase{{.Type}}Processor()
 	}
 
-	type Unimplemented{{.Type}}Processor struct {
+	type Base{{.Type}}Processor struct {
 		Address  common.Address
 		ABI      abi.ABI
 		Contract *{{.Type}}
@@ -62,7 +62,7 @@ import (
 		}
 	}
 
-	func (h *Unimplemented{{.Type}}Processor) Setup(address common.Address, eth interface {
+	func (h *Base{{.Type}}Processor) Setup(address common.Address, eth interface {
 		ethereum.ChainReader
 		ethereum.ChainStateReader
 		ethereum.TransactionReader
@@ -85,8 +85,8 @@ import (
 		return nil
 	}
 
-	func (h *Unimplemented{{.Type}}Processor) ProcessElement(p interface{}) func(context.Context, types.Log, {{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error {
-		return func(ctx context.Context, vLog types.Log, {{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error {
+	func (h *Base{{.Type}}Processor) ProcessElement(p interface{}) func(context.Context, types.Log, func({{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{formatPointer $type.Kind}}{{$type.Ident}}{{end}})) error {
+		return func(ctx context.Context, vLog types.Log, cb func({{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{formatPointer $type.Kind}}{{$type.Ident}}{{end}})) error {
 			switch vLog.Topics[0].Hex() {
 			{{range .Events}}
 			case h.ABI.Events["{{.Normalized.Name}}"].ID.Hex():
@@ -96,7 +96,7 @@ import (
 				}
 
 				e.Raw = vLog
-				if err := p.({{$handler.Type}}Processor).Process{{.Normalized.Name}}(ctx, e, {{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}}{{end}}); err != nil {
+				if err := p.({{$handler.Type}}Processor).Process{{.Normalized.Name}}(ctx, e, cb); err != nil {
 					return fmt.Errorf("processing {{.Normalized.Name}}: %w", err)
 				}
 			{{end}}
@@ -105,7 +105,7 @@ import (
 		}
 	}
 
-	func (h *Unimplemented{{$handler.Type}}Processor) UnpackLog(out interface{}, event string, log types.Log) error {
+	func (h *Base{{$handler.Type}}Processor) UnpackLog(out interface{}, event string, log types.Log) error {
 		if len(log.Data) > 0 {
 			if err := h.ABI.UnpackIntoInterface(out, event, log.Data); err != nil {
 				return err
@@ -120,17 +120,17 @@ import (
 		return abi.ParseTopics(out, indexed, log.Topics[1:])
 	}
 
-	func (h *Unimplemented{{$handler.Type}}Processor) Initialize(ctx context.Context, start uint64, {{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error {
+	func (h *Base{{$handler.Type}}Processor) Initialize(ctx context.Context, start uint64, {{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error {
 		return nil
 	}
 
 	{{range .Events}}
-		func (h *Unimplemented{{$handler.Type}}Processor) Process{{.Normalized.Name}}(ctx context.Context, e *{{$handler.Type}}{{.Normalized.Name}}, {{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error {
+		func (h *Base{{$handler.Type}}Processor) Process{{.Normalized.Name}}(ctx context.Context, e *{{$handler.Type}}{{.Normalized.Name}}, cb func({{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}})) error {
 			return nil
 		}
 	{{end}}
 
-	func (h *Unimplemented{{$handler.Type}}Processor) mustEmbedUnimplemented{{$handler.Type}}Processor() {}
+	func (h *Base{{$handler.Type}}Processor) mustEmbedBase{{$handler.Type}}Processor() {}
 {{end}}
 `
 

@@ -12,6 +12,8 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+
+	"github.com/withtally/synceth/example"
 )
 
 type ExampleProcessor interface {
@@ -21,14 +23,14 @@ type ExampleProcessor interface {
 		ethereum.TransactionReader
 		bind.ContractBackend
 	}) error
-	Initialize(ctx context.Context, start uint64) error
+	Initialize(ctx context.Context, start uint64, tx *example.TestInput) error
 
-	ProcessExampleEvent(ctx context.Context, e *ExampleExampleEvent) error
+	ProcessExampleEvent(ctx context.Context, e *ExampleExampleEvent, cb func(tx *example.TestInput)) error
 
-	mustEmbedUnimplementedExampleProcessor()
+	mustEmbedBaseExampleProcessor()
 }
 
-type UnimplementedExampleProcessor struct {
+type BaseExampleProcessor struct {
 	Address  common.Address
 	ABI      abi.ABI
 	Contract *Example
@@ -40,7 +42,7 @@ type UnimplementedExampleProcessor struct {
 	}
 }
 
-func (h *UnimplementedExampleProcessor) Setup(address common.Address, eth interface {
+func (h *BaseExampleProcessor) Setup(address common.Address, eth interface {
 	ethereum.ChainReader
 	ethereum.ChainStateReader
 	ethereum.TransactionReader
@@ -63,8 +65,8 @@ func (h *UnimplementedExampleProcessor) Setup(address common.Address, eth interf
 	return nil
 }
 
-func (h *UnimplementedExampleProcessor) ProcessElement(p interface{}) func(context.Context, types.Log) error {
-	return func(ctx context.Context, vLog types.Log) error {
+func (h *BaseExampleProcessor) ProcessElement(p interface{}) func(context.Context, types.Log, func(*example.TestInput)) error {
+	return func(ctx context.Context, vLog types.Log, cb func(*example.TestInput)) error {
 		switch vLog.Topics[0].Hex() {
 
 		case h.ABI.Events["ExampleEvent"].ID.Hex():
@@ -74,7 +76,7 @@ func (h *UnimplementedExampleProcessor) ProcessElement(p interface{}) func(conte
 			}
 
 			e.Raw = vLog
-			if err := p.(ExampleProcessor).ProcessExampleEvent(ctx, e); err != nil {
+			if err := p.(ExampleProcessor).ProcessExampleEvent(ctx, e, cb); err != nil {
 				return fmt.Errorf("processing ExampleEvent: %w", err)
 			}
 
@@ -83,7 +85,7 @@ func (h *UnimplementedExampleProcessor) ProcessElement(p interface{}) func(conte
 	}
 }
 
-func (h *UnimplementedExampleProcessor) UnpackLog(out interface{}, event string, log types.Log) error {
+func (h *BaseExampleProcessor) UnpackLog(out interface{}, event string, log types.Log) error {
 	if len(log.Data) > 0 {
 		if err := h.ABI.UnpackIntoInterface(out, event, log.Data); err != nil {
 			return err
@@ -98,12 +100,12 @@ func (h *UnimplementedExampleProcessor) UnpackLog(out interface{}, event string,
 	return abi.ParseTopics(out, indexed, log.Topics[1:])
 }
 
-func (h *UnimplementedExampleProcessor) Initialize(ctx context.Context, start uint64) error {
+func (h *BaseExampleProcessor) Initialize(ctx context.Context, start uint64, tx *example.TestInput) error {
 	return nil
 }
 
-func (h *UnimplementedExampleProcessor) ProcessExampleEvent(ctx context.Context, e *ExampleExampleEvent) error {
+func (h *BaseExampleProcessor) ProcessExampleEvent(ctx context.Context, e *ExampleExampleEvent, cb func(tx *example.TestInput)) error {
 	return nil
 }
 
-func (h *UnimplementedExampleProcessor) mustEmbedUnimplementedExampleProcessor() {}
+func (h *BaseExampleProcessor) mustEmbedBaseExampleProcessor() {}
