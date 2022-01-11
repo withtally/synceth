@@ -9,8 +9,10 @@ import (
 )
 
 type Client interface {
-	bind.ContractBackend
 	ethereum.ChainReader
+	ethereum.ChainStateReader
+	ethereum.TransactionReader
+	bind.ContractBackend
 	ChainID(ctx context.Context) (*big.Int, error)
 	BlockNumber(ctx context.Context) (uint64, error)
 }

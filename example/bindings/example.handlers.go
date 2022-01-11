@@ -25,7 +25,7 @@ type ExampleProcessor interface {
 	}) error
 	Initialize(ctx context.Context, start uint64, tx *example.TestInput) error
 
-	ProcessExampleEvent(ctx context.Context, e *ExampleExampleEvent) (func(tx *example.TestInput) error, error)
+	ProcessExampleEvent(ctx context.Context, e ExampleExampleEvent) (func(tx *example.TestInput) error, error)
 
 	mustEmbedBaseExampleProcessor()
 }
@@ -107,7 +107,7 @@ func (h *BaseExampleProcessor) Initialize(ctx context.Context, start uint64, tx 
 	return nil
 }
 
-func (h *BaseExampleProcessor) ProcessExampleEvent(ctx context.Context, e *ExampleExampleEvent) (func(tx *example.TestInput) error, error) {
+func (h *BaseExampleProcessor) ProcessExampleEvent(ctx context.Context, e ExampleExampleEvent) (func(tx *example.TestInput) error, error) {
 	return nil, nil
 }
 
