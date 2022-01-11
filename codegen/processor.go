@@ -90,8 +90,8 @@ import (
 			switch vLog.Topics[0].Hex() {
 			{{range .Events}}
 			case h.ABI.Events["{{.Normalized.Name}}"].ID.Hex():
-				e := new({{$handler.Type}}{{.Normalized.Name}})
-				if err := h.UnpackLog(e, "{{.Normalized.Name}}", vLog); err != nil {
+				e := {{$handler.Type}}{{.Normalized.Name}}{}
+				if err := h.UnpackLog(&e, "{{.Normalized.Name}}", vLog); err != nil {
 					return nil, fmt.Errorf("unpacking {{.Normalized.Name}}: %w", err)
 				}
 

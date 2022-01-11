@@ -70,8 +70,8 @@ func (h *BaseExampleProcessor) ProcessElement(p interface{}) func(context.Contex
 		switch vLog.Topics[0].Hex() {
 
 		case h.ABI.Events["ExampleEvent"].ID.Hex():
-			e := new(ExampleExampleEvent)
-			if err := h.UnpackLog(e, "ExampleEvent", vLog); err != nil {
+			e := ExampleExampleEvent{}
+			if err := h.UnpackLog(&e, "ExampleEvent", vLog); err != nil {
 				return nil, fmt.Errorf("unpacking ExampleEvent: %w", err)
 			}
 
