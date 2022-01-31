@@ -104,7 +104,7 @@ import (
 				return cb, nil
 			{{end}}
 			}
-			return nil, nil
+			return func({{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error { return nil }, nil
 		}
 	}
 
@@ -129,7 +129,7 @@ import (
 
 	{{range .Events}}
 		func (h *Base{{$handler.Type}}Processor) Process{{.Normalized.Name}}(ctx context.Context, e {{$handler.Type}}{{.Normalized.Name}}) (func({{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error, error) {
-			return nil, nil
+			return func({{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error { return nil }, nil
 		}
 	{{end}}
 
