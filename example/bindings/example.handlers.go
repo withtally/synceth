@@ -84,7 +84,7 @@ func (h *BaseExampleProcessor) ProcessElement(p interface{}) func(context.Contex
 			return cb, nil
 
 		}
-		return nil, nil
+		return func(*example.TestInput) error { return nil }, nil
 	}
 }
 
@@ -108,7 +108,7 @@ func (h *BaseExampleProcessor) Initialize(ctx context.Context, start uint64, tx 
 }
 
 func (h *BaseExampleProcessor) ProcessExampleEvent(ctx context.Context, e ExampleExampleEvent) (func(tx *example.TestInput) error, error) {
-	return nil, nil
+	return func(tx *example.TestInput) error { return nil }, nil
 }
 
 func (h *BaseExampleProcessor) mustEmbedBaseExampleProcessor() {}
