@@ -368,8 +368,8 @@ func (_Example *ExampleFilterer) ParseExampleEvent(log types.Log) (*ExampleExamp
 
 // FakeExampleMetaData contains all meta data concerning the FakeExample contract.
 var FakeExampleMetaData = &bind.MetaData{
-	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\"}],\"name\":\"ExampleEvent\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"exampleValue\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\"}],\"name\":\"fakeEmitExampleEvent\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"retExampleValue0\",\"type\":\"string\"}],\"name\":\"fakeSetExampleValue\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
-	Bin: "0x608060405234801561001057600080fd5b50610395806100206000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c8063010ac92514610046578063b8290c1a1461005b578063d8f7c4cf1461006e575b600080fd5b61005961005436600461021e565b61008c565b005b61005961006936600461021e565b6100c6565b6100766100dd565b60405161008391906102cf565b60405180910390f35b7fb74a38eb2ebca56512a2bb0283f335555a4a4dac46ab998d65fd76f9027dca70816040516100bb91906102cf565b60405180910390a150565b80516100d990600090602084019061016f565b5050565b6060600080546100ec90610324565b80601f016020809104026020016040519081016040528092919081815260200182805461011890610324565b80156101655780601f1061013a57610100808354040283529160200191610165565b820191906000526020600020905b81548152906001019060200180831161014857829003601f168201915b5050505050905090565b82805461017b90610324565b90600052602060002090601f01602090048101928261019d57600085556101e3565b82601f106101b657805160ff19168380011785556101e3565b828001600101855582156101e3579182015b828111156101e35782518255916020019190600101906101c8565b506101ef9291506101f3565b5090565b5b808211156101ef57600081556001016101f4565b634e487b7160e01b600052604160045260246000fd5b60006020828403121561023057600080fd5b813567ffffffffffffffff8082111561024857600080fd5b818401915084601f83011261025c57600080fd5b81358181111561026e5761026e610208565b604051601f8201601f19908116603f0116810190838211818310171561029657610296610208565b816040528281528760208487010111156102af57600080fd5b826020860160208301376000928101602001929092525095945050505050565b600060208083528351808285015260005b818110156102fc578581018301518582016040015282016102e0565b8181111561030e576000604083870101525b50601f01601f1916929092016040019392505050565b600181811c9082168061033857607f821691505b6020821081141561035957634e487b7160e01b600052602260045260246000fd5b5091905056fea264697066735822122040b8c8ebc13e40273a63a02a3ba2ad93949780ecf04b8d7ca9b802cc8c91d09a64736f6c634300080b0033",
+	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\"}],\"name\":\"ExampleEvent\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"exampleValue\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\"}],\"name\":\"fakeEmitExampleEvent\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"retstringExampleValue0\",\"type\":\"string\"}],\"name\":\"fakeSetExampleValue\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
+	Bin: "0x608060405234801561001057600080fd5b50610395806100206000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c8063010ac92514610046578063b8290c1a1461005b578063d8f7c4cf1461006e575b600080fd5b61005961005436600461021e565b61008c565b005b61005961006936600461021e565b6100c6565b6100766100dd565b60405161008391906102cf565b60405180910390f35b7fb74a38eb2ebca56512a2bb0283f335555a4a4dac46ab998d65fd76f9027dca70816040516100bb91906102cf565b60405180910390a150565b80516100d990600090602084019061016f565b5050565b6060600080546100ec90610324565b80601f016020809104026020016040519081016040528092919081815260200182805461011890610324565b80156101655780601f1061013a57610100808354040283529160200191610165565b820191906000526020600020905b81548152906001019060200180831161014857829003601f168201915b5050505050905090565b82805461017b90610324565b90600052602060002090601f01602090048101928261019d57600085556101e3565b82601f106101b657805160ff19168380011785556101e3565b828001600101855582156101e3579182015b828111156101e35782518255916020019190600101906101c8565b506101ef9291506101f3565b5090565b5b808211156101ef57600081556001016101f4565b634e487b7160e01b600052604160045260246000fd5b60006020828403121561023057600080fd5b813567ffffffffffffffff8082111561024857600080fd5b818401915084601f83011261025c57600080fd5b81358181111561026e5761026e610208565b604051601f8201601f19908116603f0116810190838211818310171561029657610296610208565b816040528281528760208487010111156102af57600080fd5b826020860160208301376000928101602001929092525095945050505050565b600060208083528351808285015260005b818110156102fc578581018301518582016040015282016102e0565b8181111561030e576000604083870101525b50601f01601f1916929092016040019392505050565b600181811c9082168061033857607f821691505b6020821081141561035957634e487b7160e01b600052602260045260246000fd5b5091905056fea26469706673582212200d9a7cea162c03631cca67410b5e158cb8942957609ddde40bec8f8a21362e6764736f6c634300080a0033",
 }
 
 // FakeExampleABI is the input ABI used to generate the binding from.
@@ -593,23 +593,23 @@ func (_FakeExample *FakeExampleTransactorSession) FakeEmitExampleEvent(value str
 
 // FakeSetExampleValue is a paid mutator transaction binding the contract method 0xb8290c1a.
 //
-// Solidity: function fakeSetExampleValue(string retExampleValue0) returns()
-func (_FakeExample *FakeExampleTransactor) FakeSetExampleValue(opts *bind.TransactOpts, retExampleValue0 string) (*types.Transaction, error) {
-	return _FakeExample.contract.Transact(opts, "fakeSetExampleValue", retExampleValue0)
+// Solidity: function fakeSetExampleValue(string retstringExampleValue0) returns()
+func (_FakeExample *FakeExampleTransactor) FakeSetExampleValue(opts *bind.TransactOpts, retstringExampleValue0 string) (*types.Transaction, error) {
+	return _FakeExample.contract.Transact(opts, "fakeSetExampleValue", retstringExampleValue0)
 }
 
 // FakeSetExampleValue is a paid mutator transaction binding the contract method 0xb8290c1a.
 //
-// Solidity: function fakeSetExampleValue(string retExampleValue0) returns()
-func (_FakeExample *FakeExampleSession) FakeSetExampleValue(retExampleValue0 string) (*types.Transaction, error) {
-	return _FakeExample.Contract.FakeSetExampleValue(&_FakeExample.TransactOpts, retExampleValue0)
+// Solidity: function fakeSetExampleValue(string retstringExampleValue0) returns()
+func (_FakeExample *FakeExampleSession) FakeSetExampleValue(retstringExampleValue0 string) (*types.Transaction, error) {
+	return _FakeExample.Contract.FakeSetExampleValue(&_FakeExample.TransactOpts, retstringExampleValue0)
 }
 
 // FakeSetExampleValue is a paid mutator transaction binding the contract method 0xb8290c1a.
 //
-// Solidity: function fakeSetExampleValue(string retExampleValue0) returns()
-func (_FakeExample *FakeExampleTransactorSession) FakeSetExampleValue(retExampleValue0 string) (*types.Transaction, error) {
-	return _FakeExample.Contract.FakeSetExampleValue(&_FakeExample.TransactOpts, retExampleValue0)
+// Solidity: function fakeSetExampleValue(string retstringExampleValue0) returns()
+func (_FakeExample *FakeExampleTransactorSession) FakeSetExampleValue(retstringExampleValue0 string) (*types.Transaction, error) {
+	return _FakeExample.Contract.FakeSetExampleValue(&_FakeExample.TransactOpts, retstringExampleValue0)
 }
 
 // FakeExampleExampleEventIterator is returned from FilterExampleEvent and is used to iterate over the raw logs and unpacked data for ExampleEvent events raised by the FakeExample contract.

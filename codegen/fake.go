@@ -36,7 +36,7 @@ contract Fake{{.Type}} {
 		{{if gt (len .Outputs) 0}}return (
 			{{$s := separator ", "}}
 			{{range $i, $o := .Outputs}}
-				{{call $s}}_{{(output $ns .Name $i)}}
+				{{call $s}}_{{(output $ns (.Type.String) .Name $i)}}
 			{{end}}
 		);{{end}}
 	}
@@ -82,11 +82,11 @@ func event(args []abi.Argument) string {
 	return out
 }
 
-func output(ns, n string, i int) string {
+func output(ns, typ, n string, i int) string {
 	if n == "" {
-		return fmt.Sprintf("ret%s%d", ns, i)
+		return fmt.Sprintf("ret%s%s%d", typ, ns, i)
 	}
-	return fmt.Sprintf("%s%s", ns, n)
+	return fmt.Sprintf("%s%s%s", typ, ns, n)
 }
 
 func outputInputs(ns string, args []abi.Argument) string {
@@ -98,7 +98,7 @@ func outputInputs(ns string, args []abi.Argument) string {
 			if i > 0 {
 				out += ", "
 			}
-			out += fmt.Sprintf("%s %s", location(a.Type.String()), output(ns, a.Name, i))
+			out += fmt.Sprintf("%s %s", location(a.Type.String()), output(ns, a.Type.String(), a.Name, i))
 		}
 	}
 	return out
@@ -110,7 +110,7 @@ func outputVars(ns string, args []abi.Argument) string {
 		if len(a.Type.TupleElems) > 0 {
 			// TODO: support return structs
 		} else {
-			out += fmt.Sprintf("%s private _%s;\n", a.Type.String(), output(ns, a.Name, i))
+			out += fmt.Sprintf("%s private _%s;\n", a.Type.String(), output(ns, a.Type.String(), a.Name, i))
 		}
 	}
 	return out
@@ -122,7 +122,7 @@ func outputVarAssignments(ns string, args []abi.Argument) string {
 		if len(a.Type.TupleElems) > 0 {
 			// TODO: support return structs
 		} else {
-			out += fmt.Sprintf("_%s = %s;\n", output(ns, a.Name, i), output(ns, a.Name, i))
+			out += fmt.Sprintf("_%s = %s;\n", output(ns, a.Type.String(), a.Name, i), output(ns, a.Type.String(), a.Name, i))
 		}
 	}
 	return out
