@@ -84,9 +84,9 @@ func event(args []abi.Argument) string {
 
 func output(ns, typ, n string, i int) string {
 	if n == "" {
-		return fmt.Sprintf("ret%s%s%d", typ, ns, i)
+		return fmt.Sprintf("ret%s%s%d", strings.Replace(typ, "[]", "Array", 1), ns, i)
 	}
-	return fmt.Sprintf("%s%s%s", typ, ns, n)
+	return fmt.Sprintf("%s%s%s", strings.Replace(typ, "[]", "Array", 1), ns, n)
 }
 
 func outputInputs(ns string, args []abi.Argument) string {
