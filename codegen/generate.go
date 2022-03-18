@@ -40,11 +40,11 @@ func GenerateBindings(path string, outdir string, config *BindingsConfig) error 
 				return nil
 			}
 
-			if matched, err := filepath.Match("*.abi", filepath.Base(path)); err != nil {
+			if matched, err := filepath.Match("*.abi.json", filepath.Base(path)); err != nil {
 				return err
 			} else if matched {
 				dir, fn := filepath.Split(path)
-				typ := strings.TrimSuffix(fn, filepath.Ext(fn))
+				typ := strings.TrimSuffix(fn, ".abi.json")
 				name := strings.ToLower(typ)
 				pkg := strings.ToLower(filepath.Base(outdir))
 
