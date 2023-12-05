@@ -31,7 +31,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 
 	{{range $type := .InputTypes}}
-		"{{$type.PkgPath}}"
+		{{generateAlias .Alias}} "{{.PkgPath}}"
 	{{end}}
 )
 
@@ -148,6 +148,7 @@ type tmplProcessorData struct {
 }
 
 type inputType struct {
+	Alias   *string
 	Name    string
 	Ident   string
 	Kind    reflect.Kind
@@ -169,10 +170,17 @@ func GenerateProcessor(types []string, abis []string, pkg string, inputs []Input
 		t := reflect.TypeOf(v.Type)
 		tv := indirect(t)
 
+		i := tv.String()
+		if v.Alias != nil {
+			s := strings.Split(i, ".")
+			i = fmt.Sprintf("%s.%s", *v.Alias, s[1])
+		}
+
 		inputTypes = append(inputTypes, inputType{
+			Alias:   v.Alias,
 			Kind:    t.Kind(),
 			Name:    v.Name,
-			Ident:   tv.String(),
+			Ident:   i,
 			PkgPath: tv.PkgPath(),
 		})
 	}
@@ -219,6 +227,7 @@ func GenerateProcessor(types []string, abis []string, pkg string, inputs []Input
 	tmpl := template.Must(template.New("").Funcs(template.FuncMap{
 		"formatPointer": formatPointer,
 		"separator":     separator,
+		"generateAlias": generateAlias,
 	}).Parse(tmplProcessor))
 	if err := tmpl.Execute(buffer, data); err != nil {
 		return "", err
@@ -243,6 +252,14 @@ func indirect(t reflect.Type) reflect.Type {
 func formatPointer(k reflect.Kind) string {
 	if k == reflect.Ptr {
 		return "*"
+	}
+
+	return ""
+}
+
+func generateAlias(alias *string) string {
+	if alias != nil {
+		return fmt.Sprintf("%s ", *alias)
 	}
 
 	return ""

@@ -14,6 +14,8 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 
 	"github.com/withtally/synceth/example"
+
+	testexample "github.com/withtally/synceth/testexample/example"
 )
 
 type ExampleProcessor interface {
@@ -23,9 +25,9 @@ type ExampleProcessor interface {
 		ethereum.TransactionReader
 		bind.ContractBackend
 	}) error
-	Initialize(ctx context.Context, start uint64, tx *example.TestInput) error
+	Initialize(ctx context.Context, start uint64, tx *example.TestInput, testtx *testexample.TestInput) error
 
-	ProcessExampleEvent(ctx context.Context, e ExampleExampleEvent) (func(tx *example.TestInput) error, error)
+	ProcessExampleEvent(ctx context.Context, e ExampleExampleEvent) (func(tx *example.TestInput, testtx *testexample.TestInput) error, error)
 
 	mustEmbedBaseExampleProcessor()
 }
@@ -65,8 +67,8 @@ func (h *BaseExampleProcessor) Setup(address common.Address, eth interface {
 	return nil
 }
 
-func (h *BaseExampleProcessor) ProcessElement(p interface{}) func(context.Context, types.Log) (func(*example.TestInput) error, error) {
-	return func(ctx context.Context, vLog types.Log) (func(*example.TestInput) error, error) {
+func (h *BaseExampleProcessor) ProcessElement(p interface{}) func(context.Context, types.Log) (func(*example.TestInput, *testexample.TestInput) error, error) {
+	return func(ctx context.Context, vLog types.Log) (func(*example.TestInput, *testexample.TestInput) error, error) {
 		switch vLog.Topics[0].Hex() {
 
 		case h.ABI.Events["ExampleEvent"].ID.Hex():
@@ -84,7 +86,7 @@ func (h *BaseExampleProcessor) ProcessElement(p interface{}) func(context.Contex
 			return cb, nil
 
 		}
-		return func(*example.TestInput) error { return nil }, nil
+		return func(*example.TestInput, *testexample.TestInput) error { return nil }, nil
 	}
 }
 
@@ -103,12 +105,12 @@ func (h *BaseExampleProcessor) UnpackLog(out interface{}, event string, log type
 	return abi.ParseTopics(out, indexed, log.Topics[1:])
 }
 
-func (h *BaseExampleProcessor) Initialize(ctx context.Context, start uint64, tx *example.TestInput) error {
+func (h *BaseExampleProcessor) Initialize(ctx context.Context, start uint64, tx *example.TestInput, testtx *testexample.TestInput) error {
 	return nil
 }
 
-func (h *BaseExampleProcessor) ProcessExampleEvent(ctx context.Context, e ExampleExampleEvent) (func(tx *example.TestInput) error, error) {
-	return func(tx *example.TestInput) error { return nil }, nil
+func (h *BaseExampleProcessor) ProcessExampleEvent(ctx context.Context, e ExampleExampleEvent) (func(tx *example.TestInput, testtx *testexample.TestInput) error, error) {
+	return func(tx *example.TestInput, testtx *testexample.TestInput) error { return nil }, nil
 }
 
 func (h *BaseExampleProcessor) mustEmbedBaseExampleProcessor() {}

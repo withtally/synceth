@@ -12,8 +12,9 @@ import (
 )
 
 type InputType struct {
-	Name string
-	Type interface{}
+	Name  string
+	Alias *string
+	Type  interface{}
 }
 
 type HandlersConfig struct {
