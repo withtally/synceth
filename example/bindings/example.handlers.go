@@ -19,7 +19,7 @@ import (
 )
 
 type ExampleProcessor interface {
-	Setup(address common.Address, eth interface {
+	Setup(ctx context.Context, address common.Address, eth interface {
 		ethereum.ChainReader
 		ethereum.ChainStateReader
 		ethereum.TransactionReader
@@ -44,7 +44,7 @@ type BaseExampleProcessor struct {
 	}
 }
 
-func (h *BaseExampleProcessor) Setup(address common.Address, eth interface {
+func (h *BaseExampleProcessor) Setup(ctx context.Context, address common.Address, eth interface {
 	ethereum.ChainReader
 	ethereum.ChainStateReader
 	ethereum.TransactionReader

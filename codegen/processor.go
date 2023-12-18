@@ -37,7 +37,7 @@ import (
 
 {{range $handler := .Processors}}
 	type {{.Type}}Processor interface {
-		Setup(address common.Address, eth interface {
+		Setup(ctx context.Context, address common.Address, eth interface {
 			ethereum.ChainReader
 			ethereum.ChainStateReader
 			ethereum.TransactionReader
@@ -62,7 +62,7 @@ import (
 		}
 	}
 
-	func (h *Base{{.Type}}Processor) Setup(address common.Address, eth interface {
+	func (h *Base{{.Type}}Processor) Setup(ctx context.Context, address common.Address, eth interface {
 		ethereum.ChainReader
 		ethereum.ChainStateReader
 		ethereum.TransactionReader
