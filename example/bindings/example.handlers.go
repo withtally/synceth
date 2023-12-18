@@ -19,12 +19,12 @@ import (
 )
 
 type ExampleProcessor interface {
-	Setup(address common.Address, eth interface {
+	Setup(ctx context.Context, address common.Address, eth interface {
 		ethereum.ChainReader
 		ethereum.ChainStateReader
 		ethereum.TransactionReader
 		bind.ContractBackend
-	}) error
+	}, extra map[string]interface{}) error
 	Initialize(ctx context.Context, start uint64, tx *example.TestInput, testtx *testexample.TestInput) error
 
 	ProcessExampleEvent(ctx context.Context, e ExampleExampleEvent) (func(tx *example.TestInput, testtx *testexample.TestInput) error, error)
@@ -44,12 +44,12 @@ type BaseExampleProcessor struct {
 	}
 }
 
-func (h *BaseExampleProcessor) Setup(address common.Address, eth interface {
+func (h *BaseExampleProcessor) Setup(ctx context.Context, address common.Address, eth interface {
 	ethereum.ChainReader
 	ethereum.ChainStateReader
 	ethereum.TransactionReader
 	bind.ContractBackend
-}) error {
+}, extra map[string]interface{}) error {
 	contract, err := NewExample(address, eth)
 	if err != nil {
 		return fmt.Errorf("new Example: %w", err)

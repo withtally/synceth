@@ -37,12 +37,12 @@ import (
 
 {{range $handler := .Processors}}
 	type {{.Type}}Processor interface {
-		Setup(address common.Address, eth interface {
+		Setup(ctx context.Context, address common.Address, eth interface {
 			ethereum.ChainReader
 			ethereum.ChainStateReader
 			ethereum.TransactionReader
 			bind.ContractBackend
-		}) error
+		}, extra map[string]interface{}) error
     	Initialize(ctx context.Context, start uint64, {{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error
 		{{range .Events}}
 			Process{{.Normalized.Name}}(ctx context.Context, e {{$handler.Type}}{{.Normalized.Name}}) (func({{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error, error)
@@ -62,12 +62,12 @@ import (
 		}
 	}
 
-	func (h *Base{{.Type}}Processor) Setup(address common.Address, eth interface {
+	func (h *Base{{.Type}}Processor) Setup(ctx context.Context, address common.Address, eth interface {
 		ethereum.ChainReader
 		ethereum.ChainStateReader
 		ethereum.TransactionReader
 		bind.ContractBackend
-	}) error {
+	}, extra map[string]interface{}) error {
 		contract, err := New{{.Type}}(address, eth)
 		if err != nil {
 			return fmt.Errorf("new {{.Type}}: %w", err)
