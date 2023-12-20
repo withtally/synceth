@@ -29,10 +29,10 @@ var platforms = map[string]string{
 	"windows":    "windows",
 }
 
-var architectures = map[string]string{
-	"wasm":  "wasm32",
-	"amd64": "amd64",
-}
+// var architectures = map[string]string{
+// 	"wasm":  "wasm32",
+// 	"amd64": "amd64",
+// }
 
 var (
 	cache    = configdir.New("withtally", "ethgen").QueryCacheFolder()
@@ -141,12 +141,12 @@ func resolve(vc *parser.VersionConstraint) (Build, error) {
 		return Build{}, fmt.Errorf("platform not supported: %s", runtime.GOOS)
 	}
 
-	arch, ok := architectures[runtime.GOARCH]
-	if !ok {
-		return Build{}, fmt.Errorf("architecture not supported: %s", runtime.GOARCH)
-	}
+	// arch, ok := architectures["amd64"]
+	// if !ok {
+	// 	return Build{}, fmt.Errorf("architecture not supported: %s", runtime.GOARCH)
+	// }
 
-	uri.Path = filepath.Join(platform+"-"+arch, "list.json")
+	uri.Path = filepath.Join(platform+"-amd64", "list.json")
 	res, err := http.Get(uri.String())
 	if err != nil {
 		return Build{}, fmt.Errorf("create solc list get request: %w", err)
