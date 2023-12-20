@@ -86,7 +86,8 @@ func fetch(b Build) (Build, error) {
 	}
 
 	log.Printf("Fetching solc compiler: %s\n", b.Path)
-	uri.Path = filepath.Join(platforms[runtime.GOOS]+"-"+architectures[runtime.GOARCH], b.Path)
+	uri.Path = filepath.Join(platforms[runtime.GOOS]+"-amd64", b.Path)
+	log.Printf("URI: %s", uri.String())
 	res, err := http.Get(uri.String())
 	if err != nil {
 		return Build{}, fmt.Errorf("create solc get request: %w", err)
