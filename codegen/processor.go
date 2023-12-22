@@ -42,7 +42,7 @@ import (
 			ethereum.ChainStateReader
 			ethereum.TransactionReader
 			bind.ContractBackend
-		}, extra map[string]interface{}) error
+		}) error
     	Initialize(ctx context.Context, start uint64, {{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error
 		{{range .Events}}
 			Process{{.Normalized.Name}}(ctx context.Context, e {{$handler.Type}}{{.Normalized.Name}}) (func({{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error, error)
@@ -67,7 +67,7 @@ import (
 		ethereum.ChainStateReader
 		ethereum.TransactionReader
 		bind.ContractBackend
-	}, extra map[string]interface{}) error {
+	}) error {
 		contract, err := New{{.Type}}(address, eth)
 		if err != nil {
 			return fmt.Errorf("new {{.Type}}: %w", err)
