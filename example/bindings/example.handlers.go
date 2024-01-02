@@ -24,7 +24,7 @@ type ExampleProcessor interface {
 		ethereum.ChainStateReader
 		ethereum.TransactionReader
 		bind.ContractBackend
-	}) error
+	}, i *example.TestInput) error
 	Initialize(ctx context.Context, start uint64, tx *example.TestInput, testtx *testexample.TestInput) error
 
 	ProcessExampleEvent(ctx context.Context, e ExampleExampleEvent) (func(tx *example.TestInput, testtx *testexample.TestInput) error, error)
