@@ -49,7 +49,7 @@ func (h *BaseExampleProcessor) Setup(ctx context.Context, address common.Address
 	ethereum.ChainStateReader
 	ethereum.TransactionReader
 	bind.ContractBackend
-}) error {
+}, i *example.TestInput) error {
 	contract, err := NewExample(address, eth)
 	if err != nil {
 		return fmt.Errorf("new Example: %w", err)

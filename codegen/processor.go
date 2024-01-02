@@ -67,7 +67,7 @@ import (
 		ethereum.ChainStateReader
 		ethereum.TransactionReader
 		bind.ContractBackend
-	}) error {
+	}, {{$s := separator ", "}}{{range $type := $.SetupInputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error {
 		contract, err := New{{.Type}}(address, eth)
 		if err != nil {
 			return fmt.Errorf("new {{.Type}}: %w", err)
