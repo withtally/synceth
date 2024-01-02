@@ -24,7 +24,7 @@ type ExampleProcessor interface {
 		ethereum.ChainStateReader
 		ethereum.TransactionReader
 		bind.ContractBackend
-	}, extra map[string]interface{}) error
+	}) error
 	Initialize(ctx context.Context, start uint64, tx *example.TestInput, testtx *testexample.TestInput) error
 
 	ProcessExampleEvent(ctx context.Context, e ExampleExampleEvent) (func(tx *example.TestInput, testtx *testexample.TestInput) error, error)
@@ -49,7 +49,7 @@ func (h *BaseExampleProcessor) Setup(ctx context.Context, address common.Address
 	ethereum.ChainStateReader
 	ethereum.TransactionReader
 	bind.ContractBackend
-}, extra map[string]interface{}) error {
+}) error {
 	contract, err := NewExample(address, eth)
 	if err != nil {
 		return fmt.Errorf("new Example: %w", err)

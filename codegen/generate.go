@@ -22,9 +22,14 @@ type HandlersConfig struct {
 	InputTypes []InputType
 }
 
+type SetupConfig struct {
+	InputTypes []InputType
+}
+
 type BindingsConfig struct {
 	Fakes    bool
 	Handlers HandlersConfig
+	Setup    SetupConfig
 }
 
 func GenerateBindings(path string, outdir string, config *BindingsConfig) error {
@@ -73,7 +78,7 @@ func GenerateBindings(path string, outdir string, config *BindingsConfig) error 
 				// We generate handlers first to avoid generating them for
 				// fakes created below.
 				if config.Handlers.Generate {
-					handler, err := GenerateProcessor(types, abis, pkg, config.Handlers.InputTypes)
+					handler, err := GenerateProcessor(types, abis, pkg, config.Handlers.InputTypes, config.Setup.InputTypes)
 					if errors.Is(err, ErrNoEvents) {
 						return nil
 					} else if err != nil {

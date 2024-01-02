@@ -26,6 +26,13 @@ func main() {
 				},
 			},
 		},
+		Setup: codegen.SetupConfig{
+			InputTypes: []codegen.InputType{
+				{
+					Name: "i", Type: &example.TestInput{},
+				},
+			},
+		},
 	}); err != nil {
 		log.Fatalf("running ethgen codegen: %v", err)
 	}
