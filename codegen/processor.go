@@ -42,7 +42,7 @@ import (
 			ethereum.ChainStateReader
 			ethereum.TransactionReader
 			bind.ContractBackend
-		}) error
+		}, {{$s := separator ", "}}{{range $type := $.SetupInputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error
     	Initialize(ctx context.Context, start uint64, {{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error
 		{{range .Events}}
 			Process{{.Normalized.Name}}(ctx context.Context, e {{$handler.Type}}{{.Normalized.Name}}) (func({{$s := separator ", "}}{{range $type := $.InputTypes}}{{call $s}}{{$type.Name}} {{formatPointer $type.Kind}}{{$type.Ident}}{{end}}) error, error)
@@ -156,12 +156,13 @@ type inputType struct {
 }
 
 type tmplData struct {
-	Package    string
-	InputTypes []inputType
-	Processors map[string]*tmplProcessorData
+	Package         string
+	InputTypes      []inputType
+	SetupInputTypes []inputType
+	Processors      map[string]*tmplProcessorData
 }
 
-func GenerateProcessor(types []string, abis []string, pkg string, inputs []InputType) (string, error) {
+func GenerateProcessor(types []string, abis []string, pkg string, inputs []InputType, setupInputs []InputType) (string, error) {
 	var handlers = make(map[string]*tmplProcessorData)
 	var n int
 
@@ -177,6 +178,26 @@ func GenerateProcessor(types []string, abis []string, pkg string, inputs []Input
 		}
 
 		inputTypes = append(inputTypes, inputType{
+			Alias:   v.Alias,
+			Kind:    t.Kind(),
+			Name:    v.Name,
+			Ident:   i,
+			PkgPath: tv.PkgPath(),
+		})
+	}
+
+	var setupInputTypes []inputType
+	for _, v := range setupInputs {
+		t := reflect.TypeOf(v.Type)
+		tv := indirect(t)
+
+		i := tv.String()
+		if v.Alias != nil {
+			s := strings.Split(i, ".")
+			i = fmt.Sprintf("%s.%s", *v.Alias, s[1])
+		}
+
+		setupInputTypes = append(setupInputTypes, inputType{
 			Alias:   v.Alias,
 			Kind:    t.Kind(),
 			Name:    v.Name,
@@ -218,9 +239,10 @@ func GenerateProcessor(types []string, abis []string, pkg string, inputs []Input
 	}
 
 	data := &tmplData{
-		InputTypes: inputTypes,
-		Package:    pkg,
-		Processors: handlers,
+		InputTypes:      inputTypes,
+		SetupInputTypes: setupInputTypes,
+		Package:         pkg,
+		Processors:      handlers,
 	}
 
 	buffer := new(bytes.Buffer)
