@@ -13,8 +13,8 @@ import (
 	"sort"
 
 	"github.com/Masterminds/semver/v3"
-	"github.com/ethereum/go-ethereum/common/compiler"
 	"github.com/shibukawa/configdir"
+	"github.com/withtally/synceth/compiler"
 	"github.com/withtally/synceth/parser"
 )
 
