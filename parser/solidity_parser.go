@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"strconv"
 
-	"github.com/antlr/antlr4/runtime/Go/antlr"
+	"github.com/antlr4-go/antlr"
 )
 
 // Suppress unused import errors
@@ -15,7 +15,7 @@ var _ = fmt.Printf
 var _ = reflect.Copy
 var _ = strconv.Itoa
 
-var parserATN = []uint16{
+var parserATN = []int32{
 	3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 135, 1123,
 	4, 2, 9, 2, 4, 3, 9, 3, 4, 4, 9, 4, 4, 5, 9, 5, 4, 6, 9, 6, 4, 7, 9, 7,
 	4, 8, 9, 8, 4, 9, 9, 9, 4, 10, 9, 10, 4, 11, 9, 11, 4, 12, 9, 12, 4, 13,
@@ -628,7 +628,7 @@ type SolidityParser struct {
 func NewSolidityParser(input antlr.TokenStream) *SolidityParser {
 	this := new(SolidityParser)
 	deserializer := antlr.NewATNDeserializer(nil)
-	deserializedATN := deserializer.DeserializeFromUInt16(parserATN)
+	deserializedATN := deserializer.Deserialize(parserATN)
 	decisionToDFA := make([]*antlr.DFA, len(deserializedATN.DecisionToState))
 	for index, ds := range deserializedATN.DecisionToState {
 		decisionToDFA[index] = antlr.NewDFA(ds, index)

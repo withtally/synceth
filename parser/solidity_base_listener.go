@@ -2,7 +2,7 @@
 
 package parser // Solidity
 
-import "github.com/antlr/antlr4/runtime/Go/antlr"
+import "github.com/antlr4-go/antlr"
 
 // BaseSolidityListener is a complete listener for a parse tree produced by SolidityParser.
 type BaseSolidityListener struct{}

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -106,7 +105,7 @@ func fetch(b Build) (Build, error) {
 		return Build{}, err
 	}
 
-	if err := ioutil.WriteFile(filepath.Join(cache.Path, b.Path), buf, 0555); err != nil {
+	if err := os.WriteFile(filepath.Join(cache.Path, b.Path), buf, 0555); err != nil {
 		return Build{}, fmt.Errorf("writing solc: %w", err)
 	}
 
@@ -152,7 +151,7 @@ func resolve(vc *parser.VersionConstraint) (Build, error) {
 	}
 	defer res.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return Build{}, fmt.Errorf("reading solc list get response: %w", err)
 	}

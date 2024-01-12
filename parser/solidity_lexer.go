@@ -6,14 +6,14 @@ import (
 	"fmt"
 	"unicode"
 
-	"github.com/antlr/antlr4/runtime/Go/antlr"
+	"github.com/antlr4-go/antlr"
 )
 
 // Suppress unused import error
 var _ = fmt.Printf
 var _ = unicode.IsLetter
 
-var serializedLexerAtn = []uint16{
+var serializedLexerAtn = []int32{
 	3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 2, 135, 1870,
 	8, 1, 4, 2, 9, 2, 4, 3, 9, 3, 4, 4, 9, 4, 4, 5, 9, 5, 4, 6, 9, 6, 4, 7,
 	9, 7, 4, 8, 9, 8, 4, 9, 9, 9, 4, 10, 9, 10, 4, 11, 9, 11, 4, 12, 9, 12,
@@ -992,7 +992,9 @@ type SolidityLexer struct {
 func NewSolidityLexer(input antlr.CharStream) *SolidityLexer {
 	l := new(SolidityLexer)
 	lexerDeserializer := antlr.NewATNDeserializer(nil)
-	lexerAtn := lexerDeserializer.DeserializeFromUInt16(serializedLexerAtn)
+	
+	lexerAtn := lexerDeserializer.Deserialize(serializedLexerAtn)
+
 	lexerDecisionToDFA := make([]*antlr.DFA, len(lexerAtn.DecisionToState))
 	for index, ds := range lexerAtn.DecisionToState {
 		lexerDecisionToDFA[index] = antlr.NewDFA(ds, index)
