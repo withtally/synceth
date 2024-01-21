@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 
@@ -19,7 +19,7 @@ func Execute() {
 		if context.Bool("verbose") {
 			log.SetFlags(0)
 		} else {
-			log.SetOutput(ioutil.Discard)
+			log.SetOutput(io.Discard)
 		}
 		return nil
 	}

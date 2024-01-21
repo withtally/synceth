@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -58,7 +57,7 @@ var compileCmd = &cli.Command{
 						outdir = dir
 					}
 
-					buf, err := ioutil.ReadFile(path)
+					buf, err := os.ReadFile(path)
 					if err != nil {
 						return fmt.Errorf("reading solidity: %w", err)
 					}
@@ -74,11 +73,11 @@ var compileCmd = &cli.Command{
 							return fmt.Errorf("prettifying abi: %w", err)
 						}
 
-						if err := ioutil.WriteFile(filepath.Join(outdir, t+".abi"), pretty.Bytes(), 0600); err != nil {
+						if err := os.WriteFile(filepath.Join(outdir, t+".abi"), pretty.Bytes(), 0600); err != nil {
 							return fmt.Errorf("writing abi: %w", err)
 						}
 
-						if err := ioutil.WriteFile(filepath.Join(outdir, t+".bin"), []byte(md.Bins[i]), 0600); err != nil {
+						if err := os.WriteFile(filepath.Join(outdir, t+".bin"), []byte(md.Bins[i]), 0600); err != nil {
 							return fmt.Errorf("writing bin: %w", err)
 						}
 					}
