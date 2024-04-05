@@ -27,9 +27,10 @@ type SetupConfig struct {
 }
 
 type BindingsConfig struct {
-	Fakes    bool
-	Handlers HandlersConfig
-	Setup    SetupConfig
+	Fakes        bool
+	FakesVersion *string
+	Handlers     HandlersConfig
+	Setup        SetupConfig
 }
 
 func GenerateBindings(path string, outdir string, config *BindingsConfig) error {
@@ -91,7 +92,7 @@ func GenerateBindings(path string, outdir string, config *BindingsConfig) error 
 				}
 
 				if config.Fakes {
-					fake, err := GenerateFake(types[0], abis[0], pkg)
+					fake, err := GenerateFake(types[0], abis[0], pkg, config.FakesVersion)
 					if err != nil {
 						return fmt.Errorf("generating fake: %w", err)
 					}
