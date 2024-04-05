@@ -13,8 +13,10 @@ import (
 
 func main() {
 	tea := "testexample"
+	solversion := "0.8.0"
 	if err := codegen.GenerateBindings("./artifacts", "./bindings", &codegen.BindingsConfig{
-		Fakes: true,
+		Fakes:        true,
+		FakesVersion: &solversion,
 		Handlers: codegen.HandlersConfig{
 			Generate: true,
 			InputTypes: []codegen.InputType{
