@@ -28,9 +28,31 @@ var (
 	_ = event.NewSubscription
 )
 
+// FakeExampleWithdrawal is an auto generated low-level Go binding around an user-defined struct.
+type FakeExampleWithdrawal struct {
+	Staker      common.Address
+	DelegatedTo common.Address
+	Withdrawer  common.Address
+	Nonce       *big.Int
+	StartBlock  uint32
+	Strategies  []common.Address
+	Shares      []*big.Int
+}
+
+// IDelegationManagerWithdrawal is an auto generated low-level Go binding around an user-defined struct.
+type IDelegationManagerWithdrawal struct {
+	Staker      common.Address
+	DelegatedTo common.Address
+	Withdrawer  common.Address
+	Nonce       *big.Int
+	StartBlock  uint32
+	Strategies  []common.Address
+	Shares      []*big.Int
+}
+
 // ExampleMetaData contains all meta data concerning the Example contract.
 var ExampleMetaData = &bind.MetaData{
-	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\"}],\"name\":\"ExampleEvent\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"exampleValue\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
+	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\"}],\"name\":\"ExampleEvent\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"exampleValue\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"withdrawalRoot\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"address\",\"name\":\"staker\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"delegatedTo\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"withdrawer\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"internalType\":\"uint32\",\"name\":\"startBlock\",\"type\":\"uint32\"},{\"internalType\":\"contractIStrategy[]\",\"name\":\"strategies\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"shares\",\"type\":\"uint256[]\"}],\"indexed\":false,\"internalType\":\"structIDelegationManager.Withdrawal\",\"name\":\"withdrawal\",\"type\":\"tuple\"}],\"name\":\"WithdrawalQueued\",\"type\":\"event\"}]",
 	Bin: "0x60c0604052600660808190526532ba3433b2b760d11b60a0908152610027916000919061003a565b5034801561003457600080fd5b5061010e565b828054610046906100d3565b90600052602060002090601f01602090048101928261006857600085556100ae565b82601f1061008157805160ff19168380011785556100ae565b828001600101855582156100ae579182015b828111156100ae578251825591602001919060010190610093565b506100ba9291506100be565b5090565b5b808211156100ba57600081556001016100bf565b600181811c908216806100e757607f821691505b6020821081141561010857634e487b7160e01b600052602260045260246000fd5b50919050565b6101a68061011d6000396000f3fe608060405234801561001057600080fd5b506004361061002b5760003560e01c8063d8f7c4cf14610030575b600080fd5b61003861004e565b60405161004591906100e0565b60405180910390f35b60606000805461005d90610135565b80601f016020809104026020016040519081016040528092919081815260200182805461008990610135565b80156100d65780601f106100ab576101008083540402835291602001916100d6565b820191906000526020600020905b8154815290600101906020018083116100b957829003601f168201915b5050505050905090565b600060208083528351808285015260005b8181101561010d578581018301518582016040015282016100f1565b8181111561011f576000604083870101525b50601f01601f1916929092016040019392505050565b600181811c9082168061014957607f821691505b6020821081141561016a57634e487b7160e01b600052602260045260246000fd5b5091905056fea2646970667358221220d432acfc601a55b38872c4482f4ff23a49d4b5ed1caa9f6ba25dbf74dff0072364736f6c634300080a0033",
 }
 
@@ -366,10 +388,145 @@ func (_Example *ExampleFilterer) ParseExampleEvent(log types.Log) (*ExampleExamp
 	return event, nil
 }
 
+// ExampleWithdrawalQueuedIterator is returned from FilterWithdrawalQueued and is used to iterate over the raw logs and unpacked data for WithdrawalQueued events raised by the Example contract.
+type ExampleWithdrawalQueuedIterator struct {
+	Event *ExampleWithdrawalQueued // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *ExampleWithdrawalQueuedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(ExampleWithdrawalQueued)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(ExampleWithdrawalQueued)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *ExampleWithdrawalQueuedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *ExampleWithdrawalQueuedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// ExampleWithdrawalQueued represents a WithdrawalQueued event raised by the Example contract.
+type ExampleWithdrawalQueued struct {
+	WithdrawalRoot [32]byte
+	Withdrawal     IDelegationManagerWithdrawal
+	Raw            types.Log // Blockchain specific contextual infos
+}
+
+// FilterWithdrawalQueued is a free log retrieval operation binding the contract event 0x9009ab153e8014fbfb02f2217f5cde7aa7f9ad734ae85ca3ee3f4ca2fdd499f9.
+//
+// Solidity: event WithdrawalQueued(bytes32 withdrawalRoot, (address,address,address,uint256,uint32,address[],uint256[]) withdrawal)
+func (_Example *ExampleFilterer) FilterWithdrawalQueued(opts *bind.FilterOpts) (*ExampleWithdrawalQueuedIterator, error) {
+
+	logs, sub, err := _Example.contract.FilterLogs(opts, "WithdrawalQueued")
+	if err != nil {
+		return nil, err
+	}
+	return &ExampleWithdrawalQueuedIterator{contract: _Example.contract, event: "WithdrawalQueued", logs: logs, sub: sub}, nil
+}
+
+// WatchWithdrawalQueued is a free log subscription operation binding the contract event 0x9009ab153e8014fbfb02f2217f5cde7aa7f9ad734ae85ca3ee3f4ca2fdd499f9.
+//
+// Solidity: event WithdrawalQueued(bytes32 withdrawalRoot, (address,address,address,uint256,uint32,address[],uint256[]) withdrawal)
+func (_Example *ExampleFilterer) WatchWithdrawalQueued(opts *bind.WatchOpts, sink chan<- *ExampleWithdrawalQueued) (event.Subscription, error) {
+
+	logs, sub, err := _Example.contract.WatchLogs(opts, "WithdrawalQueued")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(ExampleWithdrawalQueued)
+				if err := _Example.contract.UnpackLog(event, "WithdrawalQueued", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseWithdrawalQueued is a log parse operation binding the contract event 0x9009ab153e8014fbfb02f2217f5cde7aa7f9ad734ae85ca3ee3f4ca2fdd499f9.
+//
+// Solidity: event WithdrawalQueued(bytes32 withdrawalRoot, (address,address,address,uint256,uint32,address[],uint256[]) withdrawal)
+func (_Example *ExampleFilterer) ParseWithdrawalQueued(log types.Log) (*ExampleWithdrawalQueued, error) {
+	event := new(ExampleWithdrawalQueued)
+	if err := _Example.contract.UnpackLog(event, "WithdrawalQueued", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
 // FakeExampleMetaData contains all meta data concerning the FakeExample contract.
 var FakeExampleMetaData = &bind.MetaData{
-	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\"}],\"name\":\"ExampleEvent\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"exampleValue\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\"}],\"name\":\"fakeEmitExampleEvent\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"retstringExampleValue0\",\"type\":\"string\"}],\"name\":\"fakeSetExampleValue\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
-	Bin: "0x608060405234801561001057600080fd5b50610383806100206000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c8063010ac92514610046578063b8290c1a1461005b578063d8f7c4cf1461006e575b600080fd5b610059610054366004610208565b61008c565b005b610059610069366004610208565b6100c6565b6100766100dd565b60405161008391906102a9565b60405180910390f35b7fb74a38eb2ebca56512a2bb0283f335555a4a4dac46ab998d65fd76f9027dca70816040516100bb91906102a9565b60405180910390a150565b80516100d990600090602084019061016f565b5050565b6060600080546100ec906102fc565b80601f0160208091040260200160405190810160405280929190818152602001828054610118906102fc565b80156101655780601f1061013a57610100808354040283529160200191610165565b820191906000526020600020905b81548152906001019060200180831161014857829003601f168201915b5050505050905090565b82805461017b906102fc565b90600052602060002090601f01602090048101928261019d57600085556101e3565b82601f106101b657805160ff19168380011785556101e3565b828001600101855582156101e3579182015b828111156101e35782518255916020019190600101906101c8565b506101ef9291506101f3565b5090565b5b808211156101ef57600081556001016101f4565b6000602080838503121561021a578182fd5b823567ffffffffffffffff80821115610231578384fd5b818501915085601f830112610244578384fd5b81358181111561025657610256610337565b604051601f8201601f191681018501838111828210171561027957610279610337565b604052818152838201850188101561028f578586fd5b818585018683013790810190930193909352509392505050565b6000602080835283518082850152825b818110156102d5578581018301518582016040015282016102b9565b818111156102e65783604083870101525b50601f01601f1916929092016040019392505050565b60028104600182168061031057607f821691505b6020821081141561033157634e487b7160e01b600052602260045260246000fd5b50919050565b634e487b7160e01b600052604160045260246000fdfea2646970667358221220da7e7e0f8373a2cc6e5f64020ba145a9c19c4287003b565ec0ee08ca2c3f2bf464736f6c63430008000033",
+	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\"}],\"name\":\"ExampleEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"withdrawalRoot\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"address\",\"name\":\"staker\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"delegatedTo\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"withdrawer\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"internalType\":\"uint32\",\"name\":\"startBlock\",\"type\":\"uint32\"},{\"internalType\":\"address[]\",\"name\":\"strategies\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"shares\",\"type\":\"uint256[]\"}],\"indexed\":false,\"internalType\":\"structFakeExample.Withdrawal\",\"name\":\"withdrawal\",\"type\":\"tuple\"}],\"name\":\"WithdrawalQueued\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"exampleValue\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\"}],\"name\":\"fakeEmitExampleEvent\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"withdrawalRoot\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"address\",\"name\":\"staker\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"delegatedTo\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"withdrawer\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"internalType\":\"uint32\",\"name\":\"startBlock\",\"type\":\"uint32\"},{\"internalType\":\"address[]\",\"name\":\"strategies\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"shares\",\"type\":\"uint256[]\"}],\"internalType\":\"structFakeExample.Withdrawal\",\"name\":\"withdrawal\",\"type\":\"tuple\"}],\"name\":\"fakeEmitWithdrawalQueued\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"retstringExampleValue0\",\"type\":\"string\"}],\"name\":\"fakeSetExampleValue\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
+	Bin: "0x608060405234801561001057600080fd5b50610720806100206000396000f3fe608060405234801561001057600080fd5b506004361061004c5760003560e01c8063010ac9251461005157806399c9c6dc14610066578063b8290c1a14610079578063d8f7c4cf1461008c575b600080fd5b61006461005f366004610448565b6100aa565b005b610064610074366004610360565b6100e4565b610064610087366004610448565b610121565b610094610138565b6040516100a191906105f8565b60405180910390f35b7fb74a38eb2ebca56512a2bb0283f335555a4a4dac46ab998d65fd76f9027dca70816040516100d991906105f8565b60405180910390a150565b7f9009ab153e8014fbfb02f2217f5cde7aa7f9ad734ae85ca3ee3f4ca2fdd499f9828260405161011592919061055e565b60405180910390a15050565b80516101349060009060208401906101ca565b5050565b60606000805461014790610699565b80601f016020809104026020016040519081016040528092919081815260200182805461017390610699565b80156101c05780601f10610195576101008083540402835291602001916101c0565b820191906000526020600020905b8154815290600101906020018083116101a357829003601f168201915b5050505050905090565b8280546101d690610699565b90600052602060002090601f0160209004810192826101f8576000855561023e565b82601f1061021157805160ff191683800117855561023e565b8280016001018555821561023e579182015b8281111561023e578251825591602001919060010190610223565b5061024a92915061024e565b5090565b5b8082111561024a576000815560010161024f565b80356001600160a01b038116811461027a57600080fd5b919050565b600082601f83011261028f578081fd5b813560206102a461029f83610675565b61064b565b82815281810190858301838502870184018810156102c0578586fd5b855b858110156102e5576102d382610263565b845292840192908401906001016102c2565b5090979650505050505050565b600082601f830112610302578081fd5b8135602061031261029f83610675565b828152818101908583018385028701840188101561032e578586fd5b855b858110156102e557813584529284019290840190600101610330565b803563ffffffff8116811461027a57600080fd5b60008060408385031215610372578182fd5b82359150602083013567ffffffffffffffff80821115610390578283fd5b9084019060e082870312156103a3578283fd5b6103ad60e061064b565b6103b683610263565b81526103c460208401610263565b60208201526103d560408401610263565b6040820152606083013560608201526103f06080840161034c565b608082015260a083013582811115610406578485fd5b6104128882860161027f565b60a08301525060c083013582811115610429578485fd5b610435888286016102f2565b60c0830152508093505050509250929050565b6000602080838503121561045a578182fd5b823567ffffffffffffffff80821115610471578384fd5b818501915085601f830112610484578384fd5b813581811115610496576104966106d4565b6104a8601f8201601f1916850161064b565b915080825286848285010111156104bd578485fd5b80848401858401378101909201929092529392505050565b6001600160a01b03169052565b6000815180845260208085019450808401835b8381101561051a5781516001600160a01b0316875295820195908201906001016104f5565b509495945050505050565b6000815180845260208085019450808401835b8381101561051a57815187529582019590820190600101610538565b63ffffffff169052565b8281526040602080830182905283516001600160a01b03908116838501529084015116606083015282015160009061059960808401826104d5565b50606083015160a083015260808301516105b660c0840182610554565b5060a083015160e0808401526105d06101208401826104e2565b905060c0840151603f19848303016101008501526105ee8282610525565b9695505050505050565b6000602080835283518082850152825b8181101561062457858101830151858201604001528201610608565b818111156106355783604083870101525b50601f01601f1916929092016040019392505050565b60405181810167ffffffffffffffff8111828210171561066d5761066d6106d4565b604052919050565b600067ffffffffffffffff82111561068f5761068f6106d4565b5060209081020190565b6002810460018216806106ad57607f821691505b602082108114156106ce57634e487b7160e01b600052602260045260246000fd5b50919050565b634e487b7160e01b600052604160045260246000fdfea2646970667358221220c9248ede3cc4432c6e1c60cffc57509c702885714d22828161c7e619d9a192da64736f6c63430008000033",
 }
 
 // FakeExampleABI is the input ABI used to generate the binding from.
@@ -591,6 +748,27 @@ func (_FakeExample *FakeExampleTransactorSession) FakeEmitExampleEvent(value str
 	return _FakeExample.Contract.FakeEmitExampleEvent(&_FakeExample.TransactOpts, value)
 }
 
+// FakeEmitWithdrawalQueued is a paid mutator transaction binding the contract method 0x99c9c6dc.
+//
+// Solidity: function fakeEmitWithdrawalQueued(bytes32 withdrawalRoot, (address,address,address,uint256,uint32,address[],uint256[]) withdrawal) returns()
+func (_FakeExample *FakeExampleTransactor) FakeEmitWithdrawalQueued(opts *bind.TransactOpts, withdrawalRoot [32]byte, withdrawal FakeExampleWithdrawal) (*types.Transaction, error) {
+	return _FakeExample.contract.Transact(opts, "fakeEmitWithdrawalQueued", withdrawalRoot, withdrawal)
+}
+
+// FakeEmitWithdrawalQueued is a paid mutator transaction binding the contract method 0x99c9c6dc.
+//
+// Solidity: function fakeEmitWithdrawalQueued(bytes32 withdrawalRoot, (address,address,address,uint256,uint32,address[],uint256[]) withdrawal) returns()
+func (_FakeExample *FakeExampleSession) FakeEmitWithdrawalQueued(withdrawalRoot [32]byte, withdrawal FakeExampleWithdrawal) (*types.Transaction, error) {
+	return _FakeExample.Contract.FakeEmitWithdrawalQueued(&_FakeExample.TransactOpts, withdrawalRoot, withdrawal)
+}
+
+// FakeEmitWithdrawalQueued is a paid mutator transaction binding the contract method 0x99c9c6dc.
+//
+// Solidity: function fakeEmitWithdrawalQueued(bytes32 withdrawalRoot, (address,address,address,uint256,uint32,address[],uint256[]) withdrawal) returns()
+func (_FakeExample *FakeExampleTransactorSession) FakeEmitWithdrawalQueued(withdrawalRoot [32]byte, withdrawal FakeExampleWithdrawal) (*types.Transaction, error) {
+	return _FakeExample.Contract.FakeEmitWithdrawalQueued(&_FakeExample.TransactOpts, withdrawalRoot, withdrawal)
+}
+
 // FakeSetExampleValue is a paid mutator transaction binding the contract method 0xb8290c1a.
 //
 // Solidity: function fakeSetExampleValue(string retstringExampleValue0) returns()
@@ -740,6 +918,141 @@ func (_FakeExample *FakeExampleFilterer) WatchExampleEvent(opts *bind.WatchOpts,
 func (_FakeExample *FakeExampleFilterer) ParseExampleEvent(log types.Log) (*FakeExampleExampleEvent, error) {
 	event := new(FakeExampleExampleEvent)
 	if err := _FakeExample.contract.UnpackLog(event, "ExampleEvent", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// FakeExampleWithdrawalQueuedIterator is returned from FilterWithdrawalQueued and is used to iterate over the raw logs and unpacked data for WithdrawalQueued events raised by the FakeExample contract.
+type FakeExampleWithdrawalQueuedIterator struct {
+	Event *FakeExampleWithdrawalQueued // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *FakeExampleWithdrawalQueuedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(FakeExampleWithdrawalQueued)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(FakeExampleWithdrawalQueued)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *FakeExampleWithdrawalQueuedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *FakeExampleWithdrawalQueuedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// FakeExampleWithdrawalQueued represents a WithdrawalQueued event raised by the FakeExample contract.
+type FakeExampleWithdrawalQueued struct {
+	WithdrawalRoot [32]byte
+	Withdrawal     FakeExampleWithdrawal
+	Raw            types.Log // Blockchain specific contextual infos
+}
+
+// FilterWithdrawalQueued is a free log retrieval operation binding the contract event 0x9009ab153e8014fbfb02f2217f5cde7aa7f9ad734ae85ca3ee3f4ca2fdd499f9.
+//
+// Solidity: event WithdrawalQueued(bytes32 withdrawalRoot, (address,address,address,uint256,uint32,address[],uint256[]) withdrawal)
+func (_FakeExample *FakeExampleFilterer) FilterWithdrawalQueued(opts *bind.FilterOpts) (*FakeExampleWithdrawalQueuedIterator, error) {
+
+	logs, sub, err := _FakeExample.contract.FilterLogs(opts, "WithdrawalQueued")
+	if err != nil {
+		return nil, err
+	}
+	return &FakeExampleWithdrawalQueuedIterator{contract: _FakeExample.contract, event: "WithdrawalQueued", logs: logs, sub: sub}, nil
+}
+
+// WatchWithdrawalQueued is a free log subscription operation binding the contract event 0x9009ab153e8014fbfb02f2217f5cde7aa7f9ad734ae85ca3ee3f4ca2fdd499f9.
+//
+// Solidity: event WithdrawalQueued(bytes32 withdrawalRoot, (address,address,address,uint256,uint32,address[],uint256[]) withdrawal)
+func (_FakeExample *FakeExampleFilterer) WatchWithdrawalQueued(opts *bind.WatchOpts, sink chan<- *FakeExampleWithdrawalQueued) (event.Subscription, error) {
+
+	logs, sub, err := _FakeExample.contract.WatchLogs(opts, "WithdrawalQueued")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(FakeExampleWithdrawalQueued)
+				if err := _FakeExample.contract.UnpackLog(event, "WithdrawalQueued", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseWithdrawalQueued is a log parse operation binding the contract event 0x9009ab153e8014fbfb02f2217f5cde7aa7f9ad734ae85ca3ee3f4ca2fdd499f9.
+//
+// Solidity: event WithdrawalQueued(bytes32 withdrawalRoot, (address,address,address,uint256,uint32,address[],uint256[]) withdrawal)
+func (_FakeExample *FakeExampleFilterer) ParseWithdrawalQueued(log types.Log) (*FakeExampleWithdrawalQueued, error) {
+	event := new(FakeExampleWithdrawalQueued)
+	if err := _FakeExample.contract.UnpackLog(event, "WithdrawalQueued", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
