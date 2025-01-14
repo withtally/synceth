@@ -29,6 +29,8 @@ type ExampleProcessor interface {
 
 	ProcessExampleEvent(ctx context.Context, e ExampleExampleEvent) (func(tx *example.TestInput, testtx *testexample.TestInput) error, error)
 
+	ProcessWithdrawalQueued(ctx context.Context, e ExampleWithdrawalQueued) (func(tx *example.TestInput, testtx *testexample.TestInput) error, error)
+
 	mustEmbedBaseExampleProcessor()
 }
 
@@ -85,6 +87,20 @@ func (h *BaseExampleProcessor) ProcessElement(p interface{}) func(context.Contex
 
 			return cb, nil
 
+		case h.ABI.Events["WithdrawalQueued"].ID.Hex():
+			e := ExampleWithdrawalQueued{}
+			if err := h.UnpackLog(&e, "WithdrawalQueued", vLog); err != nil {
+				return nil, fmt.Errorf("unpacking WithdrawalQueued: %w", err)
+			}
+
+			e.Raw = vLog
+			cb, err := p.(ExampleProcessor).ProcessWithdrawalQueued(ctx, e)
+			if err != nil {
+				return nil, fmt.Errorf("processing WithdrawalQueued: %w", err)
+			}
+
+			return cb, nil
+
 		}
 		return func(*example.TestInput, *testexample.TestInput) error { return nil }, nil
 	}
@@ -110,6 +126,10 @@ func (h *BaseExampleProcessor) Initialize(ctx context.Context, start uint64, tx 
 }
 
 func (h *BaseExampleProcessor) ProcessExampleEvent(ctx context.Context, e ExampleExampleEvent) (func(tx *example.TestInput, testtx *testexample.TestInput) error, error) {
+	return func(tx *example.TestInput, testtx *testexample.TestInput) error { return nil }, nil
+}
+
+func (h *BaseExampleProcessor) ProcessWithdrawalQueued(ctx context.Context, e ExampleWithdrawalQueued) (func(tx *example.TestInput, testtx *testexample.TestInput) error, error) {
 	return func(tx *example.TestInput, testtx *testexample.TestInput) error { return nil }, nil
 }
 

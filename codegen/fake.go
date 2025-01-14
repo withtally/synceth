@@ -16,31 +16,37 @@ pragma solidity {{.Version}};
 
 contract Fake{{.Type}} {
 	{{range .ABI.Events}}
-	event {{.RawName}}({{(event .Inputs)}});
-	function fakeEmit{{.RawName}}({{$s := separator ", "}}{{range .Inputs}}{{call $s}}{{(location .Type.String)}} {{.Name}}{{end}}) public {
-		emit {{.RawName}}({{$s := separator ", "}}{{range .Inputs}}{{call $s}}{{.Name}}{{end}});
-	}
-	{{end}}
+		{{range .Inputs}}
+			{{if needsStruct .}}
+				{{structDefinition .}}
+			{{end}}
+		{{end}}
 
-	{{range .ABI.Methods}}
-	{{if not (hasStuct .)}}
-	{{$ns := (toCamel .RawName)}}
-	{{if gt (len .Outputs) 0}}
-		{{(outputVars $ns .Outputs)}}
-		function fakeSet{{(toCamel .RawName)}}({{(outputInputs $ns .Outputs)}}) public {
-		{{(outputVarAssignments $ns .Outputs)}}
+		event {{.RawName}}({{(event .Inputs)}});
+		function fakeEmit{{.RawName}}({{fakeEmitInputs .Inputs}}) public {
+			{{fakeEmitHelper .RawName .Inputs}}
 		}
 	{{end}}
 
-	function {{.RawName}}({{$s := separator ", "}}{{range .Inputs}}{{call $s}}{{(location .Type.String)}}{{end}}) public view{{if gt (len .Outputs) 0}} returns ({{(outputs .Outputs)}}){{end}} {
-		{{if gt (len .Outputs) 0}}return (
-			{{$s := separator ", "}}
-			{{range $i, $o := .Outputs}}
-				{{call $s}}_{{(output $ns (.Type.String) .Name $i)}}
+	{{range .ABI.Methods}}
+		{{if not (hasStuct .)}}
+			{{$ns := (toCamel .RawName)}}
+			{{if gt (len .Outputs) 0}}
+				{{(outputVars $ns .Outputs)}}
+				function fakeSet{{(toCamel .RawName)}}({{(outputInputs $ns .Outputs)}}) public {
+				{{(outputVarAssignments $ns .Outputs)}}
+				}
 			{{end}}
-		);{{end}}
-	}
-	{{end}}
+
+			function {{.RawName}}({{$s := separator ", "}}{{range .Inputs}}{{call $s}}{{(location .Type.String)}}{{end}}) public view{{if gt (len .Outputs) 0}} returns ({{(outputs .Outputs)}}){{end}} {
+				{{if gt (len .Outputs) 0}}return (
+					{{$s := separator ", "}}
+					{{range $i, $o := .Outputs}}
+						{{call $s}}_{{(output $ns (.Type.String) .Name $i)}}
+					{{end}}
+				);{{end}}
+			}
+		{{end}}
 	{{end}}
 }
 `
@@ -66,12 +72,16 @@ func location(s string) string {
 func event(args []abi.Argument) string {
 	out := ""
 	for i, a := range args {
+		if i > 0 {
+			out += ", "
+		}
+
 		if len(a.Type.TupleElems) > 0 {
+			structName := structs[a.Type.String()]
+
+			out += fmt.Sprintf("%s %s", structName, a.Name)
 			// TODO: support return structs
 		} else {
-			if i > 0 {
-				out += ", "
-			}
 			indexed := ""
 			if a.Indexed {
 				indexed = "indexed "
@@ -159,6 +169,62 @@ func hasStuct(m abi.Method) bool {
 	return false
 }
 
+func fakeEmitInputs(args []abi.Argument) string {
+	out := ""
+
+	for i, a := range args {
+		if i != 0 {
+			out += ", "
+		}
+		if needsStruct(a) {
+			structName := structs[a.Type.String()]
+
+			out += fmt.Sprintf("%s memory %s", structName, a.Name)
+		} else {
+			out += fmt.Sprintf("%s %s", location(a.Type.String()), a.Name)
+		}
+	}
+
+	return out
+}
+
+func fakeEmitHelper(eventName string, args []abi.Argument) string {
+	out := fmt.Sprintf("emit %s(", eventName)
+	s := separator(", ")
+	for _, a := range args {
+		out += fmt.Sprintf("%s%s", s(), a.Name)
+	}
+	out += ");"
+	return out
+}
+
+var structs = make(map[string]string)
+
+func structDefinition(a abi.Argument) string {
+	structName := strings.ToUpper(a.Name[:1]) + a.Name[1:]
+
+	out := fmt.Sprintf("struct %s {", structName)
+
+	for i, component := range a.Type.TupleElems {
+		out += "\n"
+		out += fmt.Sprintf("%s %s;", component.String(), a.Type.TupleRawNames[i])
+	}
+
+	out += "\n}"
+
+	structs[a.Type.String()] = structName
+
+	return out
+}
+
+func needsStruct(a abi.Argument) bool {
+	if len(a.Type.TupleElems) > 0 {
+		return true
+	}
+
+	return false
+}
+
 type tmplFakeData struct {
 	Type    string
 	ABI     abi.ABI
@@ -194,10 +260,16 @@ func GenerateFake(typ string, cABI string, pkg string, solversionOverride *strin
 		"output":               output,
 		"toCamel":              abi.ToCamelCase,
 		"separator":            separator,
+		"fakeEmitInputs":       fakeEmitInputs,
+		"fakeEmitHelper":       fakeEmitHelper,
+		"structDefinition":     structDefinition,
+		"needsStruct":          needsStruct,
 	}).Parse(tmplFake))
 	if err := tmpl.Execute(buffer, data); err != nil {
 		return "", err
 	}
+
+	fmt.Println(string(buffer.Bytes()))
 
 	return string(buffer.Bytes()), nil
 }
