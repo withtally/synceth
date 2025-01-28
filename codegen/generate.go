@@ -3,7 +3,6 @@ package codegen
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -60,12 +59,12 @@ func GenerateBindings(path string, outdir string, config *BindingsConfig) error 
 					outdir = dir
 				}
 
-				abi, err := ioutil.ReadFile(path)
+				abi, err := os.ReadFile(path)
 				if err != nil {
 					return fmt.Errorf("reading abi: %w", err)
 				}
 
-				bin, err := ioutil.ReadFile(filepath.Join(dir, typ+".bin"))
+				bin, err := os.ReadFile(filepath.Join(dir, typ+".bin"))
 				if errors.Is(err, os.ErrNotExist) {
 					bin = []byte{}
 				} else if err != nil {
@@ -86,7 +85,7 @@ func GenerateBindings(path string, outdir string, config *BindingsConfig) error 
 						return fmt.Errorf("generating handler: %w", err)
 					}
 
-					if err := ioutil.WriteFile(filepath.Join(outdir, name+".handlers.go"), []byte(handler), 0600); err != nil {
+					if err := os.WriteFile(filepath.Join(outdir, name+".handlers.go"), []byte(handler), 0600); err != nil {
 						return fmt.Errorf("writing handler: %w", err)
 					}
 				}
@@ -113,7 +112,7 @@ func GenerateBindings(path string, outdir string, config *BindingsConfig) error 
 					return fmt.Errorf("binding abi: %w", err)
 				}
 
-				if err := ioutil.WriteFile(filepath.Join(outdir, name+".go"), []byte(src), 0600); err != nil {
+				if err := os.WriteFile(filepath.Join(outdir, name+".go"), []byte(src), 0600); err != nil {
 					return fmt.Errorf("writing ABI binding: %w", err)
 				}
 			}
