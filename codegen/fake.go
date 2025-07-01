@@ -269,7 +269,5 @@ func GenerateFake(typ string, cABI string, pkg string, solversionOverride *strin
 		return "", err
 	}
 
-	fmt.Println(string(buffer.Bytes()))
-
 	return string(buffer.Bytes()), nil
 }
