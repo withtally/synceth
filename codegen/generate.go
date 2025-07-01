@@ -92,7 +92,7 @@ func GenerateBindings(path string, outdir string, config *BindingsConfig) error 
 				}
 
 				if config.Fakes {
-					fake, err := GenerateFake(types[0], abis[0], pkg, config.FakesVersion)
+					fake, err := GenerateFake(types[0], abis[0], config.FakesVersion)
 					if err != nil {
 						return fmt.Errorf("generating fake: %w", err)
 					}
