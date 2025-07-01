@@ -31,15 +31,16 @@ contract Fake{{.Type}} {
 	{{range .ABI.Methods}}
 		{{if not (hasStuct .)}}
 			{{$ns := (toCamel .RawName)}}
-			{{if gt (len .Outputs) 0}}
+			{{$hasOutputs := gt (len .Outputs) 0}}
+			{{if $hasOutputs}}
 				{{(outputVars $ns .Outputs)}}
 				function fakeSet{{(toCamel .RawName)}}({{(outputInputs $ns .Outputs)}}) public {
 				{{(outputVarAssignments $ns .Outputs)}}
 				}
 			{{end}}
 
-			function {{.RawName}}({{$s := separator ", "}}{{range .Inputs}}{{call $s}}{{(location .Type.String)}}{{end}}) public view{{if gt (len .Outputs) 0}} returns ({{(outputs .Outputs)}}){{end}} {
-				{{if gt (len .Outputs) 0}}return (
+			function {{.RawName}}({{$s := separator ", "}}{{range .Inputs}}{{call $s}}{{if $hasOutputs}}{{.Name}} {{end}}{{(location .Type.String)}}{{end}}) public view{{if $hasOutputs}} returns ({{(outputs .Outputs)}}){{end}} {
+				{{if $hasOutputs}}return (
 					{{$s := separator ", "}}
 					{{range $i, $o := .Outputs}}
 						{{call $s}}_{{(output $ns (.Type.String) .Name $i)}}
@@ -207,7 +208,12 @@ func structDefinition(a abi.Argument) string {
 
 	for i, component := range a.Type.TupleElems {
 		out += "\n"
-		out += fmt.Sprintf("%s %s;", component.String(), a.Type.TupleRawNames[i])
+		// For nested tuples, just use the field name without the tuple notation
+		if component.T == abi.TupleTy {
+			out += fmt.Sprintf("string %s;", a.Type.TupleRawNames[i])
+		} else {
+			out += fmt.Sprintf("%s %s;", component.String(), a.Type.TupleRawNames[i])
+		}
 	}
 
 	out += "\n}"

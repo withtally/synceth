@@ -55,6 +55,7 @@ contract FakeSimpleView {
 		
 			
 			
+			
 				uint256 private _retuint256GetValue0;
 
 				function fakeSetGetValue(uint256 retuint256GetValue0) public {
@@ -154,6 +155,7 @@ contract FakeMultiOutput {
 		
 			
 			
+			
 				uint256 private _uint256GetValuesa;
 bool private _boolGetValuesb;
 
@@ -204,6 +206,7 @@ contract FakeWithInputs {
 		
 			
 			
+			
 				uint256 private _uint256Calculateresult;
 
 				function fakeSetCalculate(uint256 uint256Calculateresult) public {
@@ -212,7 +215,7 @@ contract FakeWithInputs {
 				}
 			
 
-			function calculate(uint256, uint256) public view returns (uint256) {
+			function calculate(x uint256, y uint256) public view returns (uint256) {
 				return (
 					
 					
@@ -285,6 +288,7 @@ contract FakeMemoryParams {
 
 	
 		
+			
 			
 			
 
@@ -387,6 +391,7 @@ contract FakeNoOutputs {
 
 	
 		
+			
 			
 			
 
@@ -507,7 +512,7 @@ contract FakeStructDef {
 			
 				struct Data {
 uint256 id;
-(string) nested;
+string nested;
 }
 			
 		
