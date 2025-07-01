@@ -231,7 +231,7 @@ type tmplFakeData struct {
 	Version string
 }
 
-func GenerateFake(typ string, cABI string, pkg string, solversionOverride *string) (string, error) {
+func GenerateFake(typ string, cABI string, solversionOverride *string) (string, error) {
 	evmABI, err := abi.JSON(strings.NewReader(cABI))
 	if err != nil {
 		return "", fmt.Errorf("parsing abi: %w", err)
