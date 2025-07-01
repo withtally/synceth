@@ -5,3 +5,27 @@ tasks:
     desc: Build the ethgen binary and run tests
     cmds:
       - cd example && go run ethgen.go && cd .. && go test ./example/...
+
+  test:coverage:
+    desc: Run tests with coverage reporting
+    cmds:
+      - go test -coverprofile=coverage.out -covermode=atomic ./...
+      - go tool cover -html=coverage.out -o coverage.html
+      - go tool cover -func=coverage.out
+
+  test:coverage:check:
+    desc: Run tests and check coverage thresholds
+    cmds:
+      - go test -coverprofile=coverage.out -covermode=atomic ./...
+      - |
+        COVERAGE=$(go tool cover -func=coverage.out | grep total | awk '{print $3}' | sed 's/%//')
+        echo "Total coverage: $COVERAGE%"
+        if (( $(echo "$COVERAGE < 80" | bc -l) )); then
+          echo "Coverage is below 80% threshold"
+          exit 1
+        fi
+
+  clean:
+    desc: Clean generated files
+    cmds:
+      - rm -f coverage.out coverage.html

@@ -1,0 +1,18 @@
+{
+    "mcpServers": {
+      "linear": {
+        "type": "stdio",
+        "command": "npx",
+        "args": [
+          "mcp-remote",
+          "https://mcp.linear.app/sse"
+        ],
+        "env": {}
+      },
+      "context7": {
+        "type": "sse",
+        "url": "https://mcp.context7.com/sse"
+      }
+    }
+  }
+  
