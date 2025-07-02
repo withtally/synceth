@@ -1,6 +1,8 @@
 module github.com/withtally/synceth
 
-go 1.21
+go 1.23.0
+
+toolchain go1.23.10
 
 require (
 	github.com/Masterminds/semver/v3 v3.1.1
