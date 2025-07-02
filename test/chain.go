@@ -62,7 +62,6 @@ func NewTestChain(t testing.TB, auth *bind.TransactOpts) *ethclient.Client {
 	}
 	// Create Ethereum Service
 	config := &ethconfig.Config{Genesis: genesis}
-	config.Ethash.PowMode = ethash.ModeFake
 	ethservice, err := eth.New(n, config)
 	if err != nil {
 		t.Fatalf("can't create new ethereum service: %v", err)
@@ -118,8 +117,4 @@ func NewSimulatedBackend(t testing.TB, auth *bind.TransactOpts) *SimulatedBacken
 
 func (b *SimulatedBackend) NetworkID(ctx context.Context) (*big.Int, error) {
 	return b.SimulatedBackend.Blockchain().Config().ChainID, nil
-}
-
-func (b *SimulatedBackend) BlockNumber(ctx context.Context) (uint64, error) {
-	return b.Blockchain().CurrentBlock().Number().Uint64(), nil
 }
