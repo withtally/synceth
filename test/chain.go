@@ -50,7 +50,7 @@ func NewTestChain(t testing.TB, auth *bind.TransactOpts) *ethclient.Client {
 		g.OffsetTime(5)
 		g.SetExtra([]byte("test"))
 	}
-	gblock := genesis.ToBlock(db)
+	gblock := genesis.ToBlock()
 	engine := ethash.NewFaker()
 	blocks, _ := core.GenerateChain(params.AllEthashProtocolChanges, gblock, engine, db, 1, generate)
 	blocks = append([]*types.Block{gblock}, blocks...)
@@ -80,7 +80,7 @@ func NewTestChain(t testing.TB, auth *bind.TransactOpts) *ethclient.Client {
 		t.Fatalf("creating rpc: %v", err)
 	}
 	m := ethservice.Miner()
-	go m.Start(auth.From)
+	go m.Start()
 
 	client := ethclient.NewClient(rpc)
 
