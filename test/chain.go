@@ -74,10 +74,7 @@ func NewTestChain(t testing.TB, auth *bind.TransactOpts) *ethclient.Client {
 		t.Fatalf("can't import test blocks: %v", err)
 	}
 
-	rpc, err := n.Attach()
-	if err != nil {
-		t.Fatalf("creating rpc: %v", err)
-	}
+	rpc := n.Attach()
 	m := ethservice.Miner()
 	go m.Start()
 
