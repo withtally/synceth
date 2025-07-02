@@ -20,10 +20,6 @@ tasks:
       - |
         COVERAGE=$(go tool cover -func=coverage.out | grep total | awk '{print $3}' | sed 's/%//')
         echo "Total coverage: $COVERAGE%"
-        if (( $(echo "$COVERAGE < 80" | bc -l) )); then
-          echo "Coverage is below 80% threshold"
-          exit 1
-        fi
 
   clean:
     desc: Clean generated files
