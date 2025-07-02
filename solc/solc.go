@@ -14,6 +14,7 @@ import (
 	"sort"
 
 	"github.com/Masterminds/semver/v3"
+	"github.com/ethereum/go-ethereum/common/compiler"
 	"github.com/shibukawa/configdir"
 	"github.com/withtally/synceth/parser"
 )
@@ -178,7 +179,7 @@ func resolve(vc *parser.VersionConstraint) (Build, error) {
 	return Build{}, fmt.Errorf("cant satisfy version constraint: %s", vc.String())
 }
 
-func CompileSolidityString(src string) (map[string]*Contract, error) {
+func CompileSolidityString(src string) (map[string]*compiler.Contract, error) {
 	c, err := parser.NewVersionConstraint(src)
 	if err != nil {
 		return nil, fmt.Errorf("parsing solidity version: %w", err)
