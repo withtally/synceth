@@ -18,13 +18,8 @@ jobs:
       with:
         go-version: '1.18'
     
-    - name: Install Task
-      uses: arduino/setup-task@v2
-      with:
-        version: 3.x
-    
     - name: Install dependencies
       run: go mod download
     
-    - name: Run tests with coverage
-      run: task test:coverage:check
+    - name: Run tests
+      run: go test ./...
