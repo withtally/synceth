@@ -108,7 +108,7 @@ func GenerateBindings(path string, outdir string, config *BindingsConfig) error 
 				}
 
 				// Generate the contract binding
-				src, err := bind.Bind(types, abis, bins, nil, pkg, bind.LangGo, nil, nil)
+				src, err := bind.Bind(types, abis, bins, nil, pkg, nil, nil)
 				if err != nil {
 					return fmt.Errorf("binding abi: %w", err)
 				}
