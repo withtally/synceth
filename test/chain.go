@@ -75,14 +75,11 @@ func NewTestChain(t testing.TB, auth *bind.TransactOpts) *ethclient.Client {
 	}
 
 	rpc := n.Attach()
-	m := ethservice.Miner()
-	go m.Start()
 
 	client := ethclient.NewClient(rpc)
 
 	t.Cleanup(func() {
 		client.Close()
-		m.Stop()
 	})
 
 	return client
@@ -110,8 +107,4 @@ func NewSimulatedBackend(t testing.TB, auth *bind.TransactOpts) *SimulatedBacken
 	return &SimulatedBackend{
 		be,
 	}
-}
-
-func (b *SimulatedBackend) NetworkID(ctx context.Context) (*big.Int, error) {
-	return b.SimulatedBackend.Blockchain().Config().ChainID, nil
 }
