@@ -54,13 +54,26 @@ func TestFakeExample(t *testing.T) {
 		t.Fatalf("Failed to deploy contract: %v", err)
 	}
 
+	// Commit the deployment
+	eth.Commit()
+
 	// Set return value for `exampleValue`
-	if _, err := c.FakeSetExampleValue(auth, "notethgen"); err != nil {
+	tx, err := c.FakeSetExampleValue(auth, "notethgen")
+	if err != nil {
 		t.Fatalf("Failed to set example value: %v", err)
 	}
 
-	// Commit block to the blockchain.
+	// Commit block to include the transaction
 	eth.Commit()
+
+	// Wait for transaction receipt to ensure it's mined
+	receipt, err := eth.TransactionReceipt(ctx, tx.Hash())
+	if err != nil {
+		t.Fatalf("Failed to get transaction receipt: %v", err)
+	}
+	if receipt.Status != 1 {
+		t.Fatalf("Transaction failed with status: %d", receipt.Status)
+	}
 
 	want := "notethgen"
 	got, err := c.ExampleValue(nil)

@@ -50,7 +50,7 @@ func NewTestChain(t testing.TB, auth *bind.TransactOpts) *ethclient.Client {
 		g.OffsetTime(5)
 		g.SetExtra([]byte("test"))
 	}
-	gblock := genesis.ToBlock(db)
+	gblock := genesis.ToBlock()
 	engine := ethash.NewFaker()
 	blocks, _ := core.GenerateChain(params.AllEthashProtocolChanges, gblock, engine, db, 1, generate)
 	blocks = append([]*types.Block{gblock}, blocks...)
@@ -62,7 +62,6 @@ func NewTestChain(t testing.TB, auth *bind.TransactOpts) *ethclient.Client {
 	}
 	// Create Ethereum Service
 	config := &ethconfig.Config{Genesis: genesis}
-	config.Ethash.PowMode = ethash.ModeFake
 	ethservice, err := eth.New(n, config)
 	if err != nil {
 		t.Fatalf("can't create new ethereum service: %v", err)
@@ -75,18 +74,12 @@ func NewTestChain(t testing.TB, auth *bind.TransactOpts) *ethclient.Client {
 		t.Fatalf("can't import test blocks: %v", err)
 	}
 
-	rpc, err := n.Attach()
-	if err != nil {
-		t.Fatalf("creating rpc: %v", err)
-	}
-	m := ethservice.Miner()
-	go m.Start(auth.From)
+	rpc := n.Attach()
 
 	client := ethclient.NewClient(rpc)
 
 	t.Cleanup(func() {
 		client.Close()
-		m.Stop()
 	})
 
 	return client
@@ -114,12 +107,4 @@ func NewSimulatedBackend(t testing.TB, auth *bind.TransactOpts) *SimulatedBacken
 	return &SimulatedBackend{
 		be,
 	}
-}
-
-func (b *SimulatedBackend) NetworkID(ctx context.Context) (*big.Int, error) {
-	return b.SimulatedBackend.Blockchain().Config().ChainID, nil
-}
-
-func (b *SimulatedBackend) BlockNumber(ctx context.Context) (uint64, error) {
-	return b.Blockchain().CurrentBlock().Number().Uint64(), nil
 }

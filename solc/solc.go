@@ -190,5 +190,5 @@ func CompileSolidityString(src string) (map[string]*compiler.Contract, error) {
 		return nil, fmt.Errorf("resolving compiler: %w", err)
 	}
 
-	return compiler.CompileSolidityString(filepath.Join(cache.Path, b.Path), src)
+	return compileSolidityString(filepath.Join(cache.Path, b.Path), src)
 }
