@@ -95,7 +95,7 @@ func fetch(b Build) (Build, error) {
 
 	buf, err := io.ReadAll(res.Body)
 	if err != nil {
-		return Build{}, fmt.Errorf("reding list.json: %w", err)
+		return Build{}, fmt.Errorf("reading list.json: %w", err)
 	}
 
 	if res.StatusCode != http.StatusOK {
