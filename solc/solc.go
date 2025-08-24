@@ -176,7 +176,7 @@ func resolve(vc *parser.VersionConstraint) (Build, error) {
 		}
 	}
 
-	return Build{}, fmt.Errorf("cant satisfy version constraint: %s", vc.String())
+	return Build{}, fmt.Errorf("can't satisfy version constraint: %s", vc.String())
 }
 
 func CompileSolidityString(src string) (map[string]*compiler.Contract, error) {
